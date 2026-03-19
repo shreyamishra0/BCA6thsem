@@ -4,6 +4,7 @@ import Networking from "./Networking";
 import "./App.css";
 import Mobile from "./MobileProgramming";
 import DS from "./DS";
+import Eco from "./economics";
 
 export default function App() {
   const [activeSubject, setActiveSubject] = useState("java");
@@ -13,6 +14,7 @@ export default function App() {
     networking: <Networking />,
     mobile: <Mobile />,
     ds: <DS />,
+    eco: <Eco />
   };
 
   return (
@@ -23,6 +25,7 @@ export default function App() {
         <button onClick={() => setActiveSubject("networking")}>Networking</button>
         <button onClick={() => setActiveSubject("mobile")}>Mobile Programming</button>
         <button onClick={() => setActiveSubject("ds")}>DS</button>
+        <button onClick={() => setActiveSubject("eco")}>Economics</button>
       </div>
 
       <div>
