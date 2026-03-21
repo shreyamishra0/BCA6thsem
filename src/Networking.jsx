@@ -3,33 +3,17 @@ import { useState } from "react";
 const UNITS = [
   {
     id: "u1",
-    title: "Unit 1 — Client-Server Model, Network Programming & Java Features",
+    title: "Unit 1 — Client-Server Model & Java Network Features",
     badge: "Assignment 1 + Lab 1",
     color: "#1A237E",
     sections: [
       {
-        qnum: "A1-Q1",
+        qnum: "Q1",
         qtitle: "Client-Server Application Model — Architecture & Block Diagram",
         content: [
-          {
-            type: "explain",
-            text: "The Client-Server model is the foundation of all network communication. It divides the application into two roles: a Client (who requests services) and a Server (who provides services). These roles communicate over a network using well-defined protocols."
-          },
-          {
-            type: "definition",
-            text: "Client-Server Model: An architectural pattern where a Client machine sends a request over a network to a Server machine, which processes the request and sends back a response. The server waits (listens) for incoming connections; the client initiates the connection."
-          },
-          {
-            type: "analogy",
-            text: "Think of a restaurant. The CUSTOMER (Client) sits at a table and places an order. The WAITER carries the order to the KITCHEN (Server). The kitchen prepares the food and the waiter delivers it back. The customer doesn't know how the food is made — they only interact through the waiter (the network protocol)."
-          },
-          {
-            type: "heading",
-            text: "Block Diagram"
-          },
-          {
-            type: "diagram",
-            text: `
+          { type: "definition", text: "Client-Server Model: An architectural pattern where a Client machine sends a request over a network to a Server machine, which processes the request and sends back a response. The server passively waits (listens) for connections; the client actively initiates." },
+          { type: "analogy", text: "Think of a restaurant. The CUSTOMER (Client) sits at a table and places an order. The WAITER carries it to the KITCHEN (Server). The kitchen prepares the food and the waiter delivers it back. The customer never knows how the food is made — they only interact through the waiter (the protocol)." },
+          { type: "diagram", text: `
 ┌─────────────────────────────────────────────────────────────────┐
 │                     NETWORK (Internet / LAN)                    │
 │                                                                 │
@@ -38,594 +22,161 @@ const UNITS = [
 │  │   CLIENT     │   ◄──────────  RESPONSE     │   SERVER    │  │
 │  │              │                             │             │  │
 │  │ - Browser    │        TCP/IP               │ - Listens   │  │
-│  │ - Java App   │    (port 80, 443, etc.)     │ - Accepts   │  │
+│  │ - Java App   │   (port 80, 443, 8080...)   │ - Accepts   │  │
 │  │ - Mobile App │                             │ - Processes │  │
 │  └──────────────┘                             └─────────────┘  │
 │                                                                 │
-│  CLIENT SIDE:                   SERVER SIDE:                    │
-│  1. Initiates connection        1. Passively waits (binds port) │
-│  2. Sends request               2. Accepts incoming connections │
-│  3. Waits for response          3. Handles multiple clients     │
-│  4. Processes response          4. Sends back response          │
-└─────────────────────────────────────────────────────────────────┘`
-          },
-          {
-            type: "heading",
-            text: "Key Characteristics"
-          },
-          {
-            type: "table",
-            headers: ["Aspect", "Client", "Server"],
+│  CLIENT:                            SERVER:                     │
+│  1. Initiates connection            1. Passively waits (listen) │
+│  2. Uses random ephemeral port      2. Uses well-known port     │
+│  3. Sends request                   3. Accepts connections      │
+│  4. Waits for and processes reply   4. Serves multiple clients  │
+└─────────────────────────────────────────────────────────────────┘
+
+ARCHITECTURE TIERS:
+  1-Tier: Client + Server on same machine (local desktop app)
+  2-Tier: Client ──► Server              (Java app → MySQL)
+  3-Tier: Client ──► App Server ──► DB   (Browser → Tomcat → MySQL)
+  N-Tier: Multiple middleware layers     (Load Balancer, Cache, etc.)` },
+          { type: "table", headers: ["Aspect", "Client", "Server"],
             rows: [
               ["Role", "Requests service", "Provides service"],
               ["Connection", "Initiates (active)", "Waits and accepts (passive)"],
               ["IP/Port", "Uses random ephemeral port", "Uses well-known fixed port (e.g., 80, 443)"],
-              ["Count", "Many clients simultaneously", "Usually one server (can be clustered)"],
-              ["Examples", "Browser, Java Socket client", "Apache Tomcat, Java ServerSocket"],
+              ["Java class", "Socket", "ServerSocket"],
+              ["Count", "Many clients simultaneously", "Usually one (can be clustered)"],
             ]
           },
-          {
-            type: "heading",
-            text: "Types of Client-Server Architecture"
-          },
-          {
-            type: "table",
-            headers: ["Type", "Description", "Example"],
-            rows: [
-              ["1-Tier", "Client and server on same machine", "Local desktop app with local DB"],
-              ["2-Tier", "Client talks directly to server", "Java app → MySQL DB directly"],
-              ["3-Tier", "Client → App Server → DB Server", "Browser → Tomcat → MySQL"],
-              ["N-Tier", "Multiple middleware layers", "Browser → Load Balancer → App → Cache → DB"],
-            ]
-          }
         ]
       },
       {
-        qnum: "A1-Q2",
-        qtitle: "Features of Network Programming & Scope of Utilization",
-        content: [
-          {
-            type: "definition",
-            text: "Network Programming: The process of writing programs that communicate with other programs over a network. It involves using sockets, protocols (TCP/UDP), and APIs to send/receive data between processes running on different machines."
-          },
-          {
-            type: "heading",
-            text: "Key Features of Network Programming"
-          },
-          {
-            type: "table",
-            headers: ["Feature", "Description"],
-            rows: [
-              ["Socket Communication", "A socket is an endpoint for communication. Network programs use sockets to send/receive streams of bytes over TCP or individual packets over UDP."],
-              ["Protocol Independence", "Programs can communicate using TCP (reliable, connection-oriented) or UDP (fast, connectionless) depending on needs."],
-              ["Addressing", "Each machine has an IP address. Each process uses a port number. Together (IP:Port) they uniquely identify a communication endpoint."],
-              ["Concurrency", "Servers handle many clients simultaneously using threads, thread pools, or non-blocking I/O (NIO)."],
-              ["Portability", "Java programs written using java.net.* run on any OS — the JVM abstracts OS-level socket differences."],
-              ["Security", "SSL/TLS (via javax.net.ssl.*) encrypts communication. Authentication, certificates, and secure channels are supported."],
-              ["High-Level APIs", "Java provides URL, URLConnection, HttpURLConnection for HTTP communication without dealing with raw sockets."],
-              ["Multicasting", "UDP supports multicast — one message sent to a group of receivers simultaneously."],
-            ]
-          },
-          {
-            type: "heading",
-            text: "Scope of Utilization"
-          },
-          {
-            type: "bullets",
-            items: [
-              "Web Applications: Every HTTP request from a browser to a web server is network programming at work.",
-              "Chat & Messaging Systems: WhatsApp, Slack — real-time bidirectional communication using sockets.",
-              "File Transfer: FTP clients, download managers transfer files over TCP sockets.",
-              "Remote Procedure Call (RMI/gRPC): Call methods on remote objects as if they were local.",
-              "Distributed Systems: Microservices talk to each other over the network.",
-              "IoT (Internet of Things): Sensors send data to servers using lightweight protocols like MQTT over TCP.",
-              "Online Gaming: Real-time multiplayer uses UDP for low-latency data.",
-              "Email (SMTP/POP3/IMAP): Email clients/servers communicate via well-defined network protocols.",
-            ]
-          }
-        ]
-      },
-      {
-        qnum: "A1-Q3",
+        qnum: "Q2",
         qtitle: "Features of Java for Network Programming",
         content: [
-          {
-            type: "explain",
-            text: "Java was designed from the ground up with networking in mind. The phrase 'The Network is the Computer' was a design philosophy baked into Java. It provides rich built-in libraries and features that make network programming straightforward."
-          },
-          {
-            type: "table",
-            headers: ["Java Feature", "Package", "Description"],
+          { type: "explain", text: "Java was designed from the ground up with networking in mind — 'The Network is the Computer' was a core philosophy. It provides rich built-in libraries that hide OS-level differences behind clean interfaces." },
+          { type: "table", headers: ["Java Feature", "Package", "Description"],
             rows: [
               ["Socket & ServerSocket", "java.net", "Low-level TCP client/server socket communication"],
-              ["DatagramSocket", "java.net", "UDP (connectionless) communication via datagrams"],
-              ["InetAddress", "java.net", "Represents IP addresses. Resolve hostnames to IPs and vice versa."],
+              ["DatagramSocket", "java.net", "UDP (connectionless) via DatagramPackets"],
+              ["InetAddress", "java.net", "Represents IP addresses. DNS lookup, reverse lookup."],
               ["URL & URLConnection", "java.net", "High-level HTTP communication — read web pages, post forms"],
-              ["HttpURLConnection", "java.net", "Specifically for HTTP — set methods (GET/POST), read headers"],
-              ["NetworkInterface", "java.net", "Inspect network interfaces (Wi-Fi, Ethernet) of the local machine"],
-              ["Multicasting (MulticastSocket)", "java.net", "Send UDP datagrams to multiple receivers at once"],
-              ["SSL/TLS Sockets", "javax.net.ssl", "Secure encrypted sockets (SSLSocket, SSLServerSocket)"],
-              ["NIO (Non-Blocking I/O)", "java.nio", "High-performance I/O using Selectors, Channels, ByteBuffers"],
-              ["Platform Independence", "JVM", "Socket code runs unchanged on Windows, Linux, macOS"],
-              ["Built-in Threading", "java.lang", "java.lang.Thread and java.util.concurrent enable concurrent servers"],
-              ["Serialization", "java.io", "Objects can be serialized and sent over the network via ObjectStream"],
+              ["HttpURLConnection", "java.net", "HTTP-specific — set methods (GET/POST), read status codes"],
+              ["MulticastSocket", "java.net", "Send UDP datagrams to a GROUP of receivers"],
+              ["SSL/TLS Sockets", "javax.net.ssl", "SSLSocket, SSLServerSocket — encrypted secure communication"],
+              ["NIO (Non-Blocking I/O)", "java.nio", "High-performance I/O: Selectors, Channels, ByteBuffers"],
+              ["Platform Independence", "JVM", "Same socket code runs on Windows, Linux, macOS unchanged"],
+              ["Built-in Threading", "java.util.concurrent", "Thread pools to serve many clients simultaneously"],
+              ["Serialization", "java.io", "Send Java objects over network via ObjectOutputStream"],
             ]
           },
-          {
-            type: "tip",
-            label: "KEY POINT",
-            text: "Java hides OS-level socket details behind clean interfaces. On Windows, a socket is a HANDLE. On Linux, it's a file descriptor. Java's Socket class wraps both — your code stays the same."
-          }
+          { type: "tip", label: "KEY POINT", text: "Java hides OS-level socket differences behind clean interfaces. On Windows, a socket is a HANDLE. On Linux, it's a file descriptor. Java's Socket class wraps both — your code stays identical on all platforms." },
+          { type: "heading", text: "Scope of Network Programming" },
+          { type: "bullets", items: [
+            "**Web Applications** — every HTTP request from browser to server",
+            "**Chat & Messaging** — WhatsApp, Slack use TCP sockets for real-time bidirectional communication",
+            "**File Transfer** — FTP clients transfer files over TCP",
+            "**Distributed Systems** — microservices communicate over the network",
+            "**Online Gaming** — real-time multiplayer uses UDP for low-latency data",
+            "**IoT** — sensors send data to servers using lightweight protocols over TCP/UDP",
+            "**Email** — SMTP/POP3/IMAP clients/servers communicate via network protocols",
+          ]},
         ]
       },
       {
-        qnum: "Lab1-Q1",
-        qtitle: "Program: Print the IP Address of www.tiktok.com",
+        qnum: "Lab1",
+        qtitle: "Programs: InetAddress — Resolve, Enumerate & Spam Check",
         content: [
-          {
-            type: "explain",
-            text: "InetAddress.getByName(hostname) performs a DNS lookup — it contacts a DNS server to translate the hostname into an IP address, just like your browser does before loading a website."
-          },
-          {
-            type: "code",
-            label: "InetAddressDemo.java — Resolve hostname to IP",
+          { type: "code", label: "InetAddressDemo.java — Resolve hostname, get all IPs, enumerate interfaces",
             lines: [`import java.net.*;
+import java.util.*;
 
 public class InetAddressDemo {
-    public static void main(String[] args) {
-        try {
-            // DNS lookup: sends request to DNS server to get IP for hostname
-            InetAddress address = InetAddress.getByName("www.tiktok.com");
-
-            System.out.println("Host Name    : " + address.getHostName());
-            System.out.println("IP Address   : " + address.getHostAddress());
-            System.out.println("toString()   : " + address.toString());
-
-            // getAllByName returns ALL IP addresses for the hostname (CDN sites have many)
-            System.out.println("\\n--- All IPs for www.tiktok.com ---");
-            InetAddress[] allAddresses = InetAddress.getAllByName("www.tiktok.com");
-            for (InetAddress addr : allAddresses) {
-                System.out.println(addr.getHostAddress());
-            }
-
-        } catch (UnknownHostException e) {
-            // Thrown if hostname cannot be resolved (no internet, typo, etc.)
-            System.out.println("Cannot resolve hostname: " + e.getMessage());
-        }
-    }
-}
-
-/*
-SAMPLE OUTPUT:
-Host Name    : www.tiktok.com
-IP Address   : 23.200.6.21
-toString()   : www.tiktok.com/23.200.6.21
---- All IPs for www.tiktok.com ---
-23.200.6.21
-23.200.6.13
-...
-*/`]
-          }
-        ]
-      },
-      {
-        qnum: "Lab1-Q2",
-        qtitle: "Program: Find the Network Interface Associated with an IP",
-        content: [
-          {
-            type: "explain",
-            text: "NetworkInterface.getByInetAddress(ip) lets you find which physical or virtual network interface card (NIC) on your machine is associated with a specific IP address."
-          },
-          {
-            type: "code",
-            label: "FindInterfaceByIP.java",
-            lines: [`import java.net.*;
-
-public class FindInterfaceByIP {
     public static void main(String[] args) throws Exception {
-        // The IP address you want to find the interface for
-        // Replace with your own machine's IP to test
-        InetAddress targetIP = InetAddress.getByName("192.168.1.5");
 
-        // Finds which NIC (network interface card) has this IP
-        NetworkInterface ni = NetworkInterface.getByInetAddress(targetIP);
+        // ── DNS Lookup ──────────────────────────────────────────────
+        InetAddress addr = InetAddress.getByName("www.google.com");
+        System.out.println("Host Name   : " + addr.getHostName());
+        System.out.println("IP Address  : " + addr.getHostAddress());
+        System.out.println("toString()  : " + addr.toString());
 
-        if (ni == null) {
-            System.out.println("No interface found for IP: " + targetIP.getHostAddress());
-        } else {
-            System.out.println("IP Address    : " + targetIP.getHostAddress());
-            System.out.println("Interface Name: " + ni.getName());        // e.g., eth0, wlan0
-            System.out.println("Display Name  : " + ni.getDisplayName()); // e.g., Intel Wi-Fi
-            System.out.println("Is Up?        : " + ni.isUp());
-            System.out.println("Is Loopback?  : " + ni.isLoopback());
-            System.out.println("Is Virtual?   : " + ni.isVirtual());
+        // Multiple IPs (CDN sites have many):
+        System.out.println("\\n-- All IPs for www.tiktok.com --");
+        for (InetAddress a : InetAddress.getAllByName("www.tiktok.com"))
+            System.out.println("  " + a.getHostAddress());
 
-            // Show all IPs on this interface
-            System.out.println("\\nAll IPs on this interface:");
-            for (InetAddress addr : java.util.Collections.list(ni.getInetAddresses())) {
-                System.out.println("  " + addr.getHostAddress());
-            }
-        }
-    }
-}
+        // ── Local & Loopback ────────────────────────────────────────
+        InetAddress local    = InetAddress.getLocalHost();
+        InetAddress loopback = InetAddress.getLoopbackAddress();
+        System.out.println("\\nLocal IP   : " + local.getHostAddress());
+        System.out.println("Loopback   : " + loopback.getHostAddress());
 
-/*
-SAMPLE OUTPUT:
-IP Address    : 192.168.1.5
-Interface Name: wlan0
-Display Name  : Wireless LAN adapter Wi-Fi
-Is Up?        : true
-Is Loopback?  : false
-Is Virtual?   : false
-*/`]
-          }
-        ]
-      },
-      {
-        qnum: "Lab1-Q3",
-        qtitle: "Program: Enumerate All Network Interfaces of the System",
-        content: [
-          {
-            type: "explain",
-            text: "NetworkInterface.getNetworkInterfaces() returns an Enumeration of ALL network interfaces on your machine — Ethernet, Wi-Fi, loopback (127.0.0.1), virtual adapters, VPNs, etc."
-          },
-          {
-            type: "code",
-            label: "EnumerateInterfaces.java",
-            lines: [`import java.net.*;
-import java.util.*;
+        // ── Address type checks ─────────────────────────────────────
+        System.out.println("isLoopback      : " + local.isLoopbackAddress());
+        System.out.println("isSiteLocal     : " + local.isSiteLocalAddress()); // 192.168.x.x
+        System.out.println("isMulticast     : " + local.isMulticastAddress());
 
-public class EnumerateInterfaces {
-    public static void main(String[] args) throws Exception {
-        // Get all interfaces — returns Enumeration<NetworkInterface>
-        Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-
-        if (interfaces == null) {
-            System.out.println("No network interfaces found.");
-            return;
-        }
-
-        int count = 0;
-        while (interfaces.hasMoreElements()) {
-            NetworkInterface ni = interfaces.nextElement();
-            count++;
-            System.out.println("=== Interface " + count + " ===");
-            System.out.println("  Name        : " + ni.getName());
-            System.out.println("  Display Name: " + ni.getDisplayName());
-            System.out.println("  Index       : " + ni.getIndex());
-            System.out.println("  Is Up       : " + ni.isUp());
-            System.out.println("  Is Loopback : " + ni.isLoopback());
-            System.out.println("  Is Virtual  : " + ni.isVirtual());
-            System.out.println("  Supports Multicast: " + ni.supportsMulticast());
-            System.out.println("  MTU         : " + ni.getMTU()); // Max Transmission Unit (bytes)
-
-            // MAC Address
+        // ── Enumerate ALL Network Interfaces ────────────────────────
+        System.out.println("\\n=== All Network Interfaces ===");
+        Enumeration<NetworkInterface> ifaces = NetworkInterface.getNetworkInterfaces();
+        while (ifaces != null && ifaces.hasMoreElements()) {
+            NetworkInterface ni = ifaces.nextElement();
+            if (!ni.isUp()) continue; // skip inactive
+            System.out.println("Name: " + ni.getName() + " | " + ni.getDisplayName());
+            System.out.println("  MTU: " + ni.getMTU() + " | Loopback: " + ni.isLoopback());
+            // MAC address
             byte[] mac = ni.getHardwareAddress();
             if (mac != null) {
-                StringBuilder macStr = new StringBuilder();
-                for (int i = 0; i < mac.length; i++) {
-                    macStr.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
-                }
-                System.out.println("  MAC Address : " + macStr);
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < mac.length; i++)
+                    sb.append(String.format("%02X%s", mac[i], i < mac.length-1 ? "-" : ""));
+                System.out.println("  MAC: " + sb);
             }
-
-            // All IP addresses on this interface
+            // IP addresses on this interface
             Enumeration<InetAddress> addrs = ni.getInetAddresses();
             while (addrs.hasMoreElements()) {
-                InetAddress addr = addrs.nextElement();
-                System.out.println("  IP Address  : " + addr.getHostAddress()
-                    + (addr instanceof Inet4Address ? " (IPv4)" : " (IPv6)"));
+                InetAddress a = addrs.nextElement();
+                System.out.println("  IP (" + (a instanceof Inet4Address ? "v4" : "v6") + "): " + a.getHostAddress());
             }
-
-            // Sub-interfaces (virtual interfaces)
-            Enumeration<NetworkInterface> subIfaces = ni.getSubInterfaces();
-            while (subIfaces.hasMoreElements()) {
-                System.out.println("  Sub-interface: " + subIfaces.nextElement().getName());
-            }
-            System.out.println();
         }
-
-        System.out.println("Total interfaces found: " + count);
     }
-}
-
-/*
-SAMPLE OUTPUT:
-=== Interface 1 ===
-  Name        : lo
-  Display Name: Software Loopback Interface 1
-  Is Loopback : true
-  IP Address  : 127.0.0.1 (IPv4)
-  IP Address  : ::1 (IPv6)
-
-=== Interface 2 ===
-  Name        : eth0
-  Display Name: Intel(R) Ethernet Connection
-  MAC Address : 1A-2B-3C-4D-5E-6F
-  IP Address  : 192.168.1.5 (IPv4)
-*/`]
-          }
-        ]
-      },
-      {
-        qnum: "Lab1-Q4",
-        qtitle: "Program: Spam Checking",
-        content: [
-          {
-            type: "explain",
-            text: "A basic spam checker verifies if an email's sending domain/IP is listed in a known spam blacklist (DNS Blackhole List / DNSBL). You reverse the IP and query a known DNSBL like 'zen.spamhaus.org'. If the DNS query resolves, the IP is spam-listed."
+}`]
           },
-          {
-            type: "code",
-            label: "SpamChecker.java — DNSBL-based spam IP check",
+          { type: "code", label: "SpamChecker.java — DNSBL-based spam IP check",
             lines: [`import java.net.*;
-import java.util.*;
 
 public class SpamChecker {
+    static final String[] BLACKLISTS = {"zen.spamhaus.org", "bl.spamcop.net"};
 
-    // Known DNSBL (DNS Blackhole List) servers
-    private static final String[] BLACKLISTS = {
-        "zen.spamhaus.org",
-        "bl.spamcop.net",
-        "dnsbl.sorbs.net"
-    };
+    // Method: Reverse IP octets and query DNSBL
+    // "1.2.3.4" → query "4.3.2.1.zen.spamhaus.org"
+    // If resolves → BLACKLISTED. If UnknownHostException → CLEAN.
+    public static boolean isSpam(String ip) {
+        String[] parts = ip.split("\\\\.");
+        if (parts.length != 4) return false;
+        String rev = parts[3]+"."+parts[2]+"."+parts[1]+"."+parts[0];
 
-    /**
-     * Check if an IP is listed as spam in any DNSBL.
-     * Method: Reverse the IP octets and append the DNSBL domain.
-     * Example: IP 1.2.3.4 → query "4.3.2.1.zen.spamhaus.org"
-     * If the query resolves → IP is BLACKLISTED
-     * If it throws UnknownHostException → IP is CLEAN
-     */
-    public static boolean isSpam(String ipAddress) {
-        // Reverse the IP: "192.168.1.1" → "1.1.168.192"
-        String[] parts = ipAddress.split("\\.");
-        if (parts.length != 4) {
-            System.out.println("Invalid IPv4 address: " + ipAddress);
-            return false;
-        }
-        String reversedIP = parts[3] + "." + parts[2] + "." + parts[1] + "." + parts[0];
-
-        for (String blacklist : BLACKLISTS) {
-            String queryHost = reversedIP + "." + blacklist;
+        for (String bl : BLACKLISTS) {
             try {
-                // If this resolves → the IP IS in the blacklist
-                InetAddress.getByName(queryHost);
-                System.out.println("  [BLACKLISTED] Found in: " + blacklist);
+                InetAddress.getByName(rev + "." + bl);
+                System.out.println("  BLACKLISTED in: " + bl);
                 return true;
             } catch (UnknownHostException e) {
-                // Not found in this blacklist — that's good!
-                System.out.println("  [CLEAN] Not in: " + blacklist);
+                System.out.println("  Clean in: " + bl);
             }
         }
-        return false; // not in any blacklist
+        return false;
     }
 
     public static void main(String[] args) {
-        String[] testIPs = {
-            "127.0.0.2",       // Loopback — often used to test DNSBL tools
-            "192.168.1.1",     // Private IP — unlikely to be listed
-            "8.8.8.8",         // Google DNS — should be clean
-        };
-
-        for (String ip : testIPs) {
-            System.out.println("\\nChecking IP: " + ip);
-            boolean spam = isSpam(ip);
-            System.out.println("  Result: " + (spam ? "🚫 SPAM" : "✅ CLEAN"));
-        }
-
-        // You can also check email domains by resolving domain to IP first
-        System.out.println("\\n--- Checking email domain ---");
-        try {
-            String emailDomain = "suspicious-domain.com";
-            InetAddress domainIP = InetAddress.getByName(emailDomain);
-            System.out.println("Domain: " + emailDomain + " → IP: " + domainIP.getHostAddress());
-            isSpam(domainIP.getHostAddress());
-        } catch (UnknownHostException e) {
-            System.out.println("Cannot resolve email domain.");
+        for (String ip : new String[]{"127.0.0.2", "8.8.8.8", "192.168.1.1"}) {
+            System.out.println("Checking: " + ip);
+            System.out.println("Result: " + (isSpam(ip) ? "SPAM" : "CLEAN") + "\\n");
         }
     }
 }`]
-          }
+          },
         ]
       },
-      {
-        qnum: "Lab1-Q5",
-        qtitle: "Program: Process Web Server Log File (Single-threaded & Multithreaded)",
-        content: [
-          {
-            type: "explain",
-            text: "A web server log file contains one line per HTTP request. Processing it means parsing each line to extract: IP, date, request method, URL, status code, and bytes sent. Multithreaded processing splits the file into chunks processed in parallel."
-          },
-          {
-            type: "code",
-            label: "LogProcessor.java — Single-threaded web log parser",
-            lines: [`import java.io.*;
-import java.util.*;
-import java.util.regex.*;
-
-public class LogProcessor {
-    // Apache Combined Log Format regex:
-    // IP - - [Date] "METHOD URL HTTP/1.x" STATUS BYTES
-    static final Pattern LOG_PATTERN = Pattern.compile(
-        "(\\\\S+) \\\\S+ \\\\S+ \\\\[([^\\\\]]+)\\\\] \\"(\\\\S+) (\\\\S+) \\\\S+\\" (\\\\d{3}) (\\\\d+|-)"
-    );
-
-    static Map<String, Integer> statusCount = new HashMap<>();
-    static Map<String, Integer> ipCount = new HashMap<>();
-    static long totalBytes = 0;
-    static int totalRequests = 0;
-
-    // Process a single log line
-    static void processLine(String line) {
-        Matcher m = LOG_PATTERN.matcher(line);
-        if (!m.matches()) return; // skip malformed lines
-
-        String ip      = m.group(1);
-        String method  = m.group(3);
-        String url     = m.group(4);
-        String status  = m.group(5);
-        String bytes   = m.group(6);
-
-        // Count requests per status code
-        statusCount.merge(status, 1, Integer::sum);
-
-        // Count requests per IP
-        ipCount.merge(ip, 1, Integer::sum);
-
-        // Sum up bytes transferred
-        if (!bytes.equals("-")) totalBytes += Long.parseLong(bytes);
-
-        totalRequests++;
-
-        // Print each request (comment this out for large files)
-        System.out.printf("IP: %-16s Method: %-6s Status: %s URL: %s%n",
-                          ip, method, status, url);
-    }
-
-    // Single-threaded version
-    static void processSingleThreaded(String filename) throws IOException {
-        System.out.println("\\n=== Single-Threaded Log Processing ===");
-        long start = System.currentTimeMillis();
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                processLine(line);
-            }
-        }
-
-        long elapsed = System.currentTimeMillis() - start;
-        printStats(elapsed);
-    }
-
-    static void printStats(long elapsed) {
-        System.out.println("\\n===== STATISTICS =====");
-        System.out.println("Total Requests : " + totalRequests);
-        System.out.println("Total Bytes    : " + totalBytes + " bytes");
-        System.out.println("Time Taken     : " + elapsed + " ms");
-        System.out.println("Status Codes   : " + statusCount);
-        // Top 5 IPs by request count
-        System.out.println("Top IPs:");
-        ipCount.entrySet().stream()
-            .sorted(Map.Entry.<String,Integer>comparingByValue().reversed())
-            .limit(5)
-            .forEach(e -> System.out.println("  " + e.getKey() + " → " + e.getValue() + " requests"));
-    }
-
-    public static void main(String[] args) throws IOException {
-        // Create a sample log file for testing
-        String filename = "access.log";
-        createSampleLog(filename);
-        processSingleThreaded(filename);
-    }
-
-    // Creates a sample Apache log file for testing
-    static void createSampleLog(String filename) throws IOException {
-        String[] ips = {"192.168.1.1", "10.0.0.5", "172.16.0.2", "192.168.1.1"};
-        String[] urls = {"/index.html", "/about.html", "/contact", "/api/data"};
-        String[] statuses = {"200", "404", "200", "500"};
-        try (PrintWriter pw = new PrintWriter(new FileWriter(filename))) {
-            for (int i = 0; i < 100; i++) {
-                int idx = i % ips.length;
-                pw.printf("%s - - [01/Jan/2025:12:00:%02d +0000] \\"GET %s HTTP/1.1\\" %s %d%n",
-                    ips[idx], (i % 60), urls[idx], statuses[idx], 1024 + i * 10);
-            }
-        }
-        System.out.println("Sample log file created: " + filename);
-    }
-}`]
-          },
-          {
-            type: "code",
-            label: "MultiThreadedLogProcessor.java — Parallel log processing",
-            lines: [`import java.io.*;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.*;
-import java.util.regex.*;
-
-public class MultiThreadedLogProcessor {
-    static final Pattern LOG_PATTERN = Pattern.compile(
-        "(\\\\S+) \\\\S+ \\\\S+ \\\\[([^\\\\]]+)\\\\] \\"(\\\\S+) (\\\\S+) \\\\S+\\" (\\\\d{3}) (\\\\d+|-)"
-    );
-
-    // Atomic counters — thread-safe increment without synchronized blocks
-    static AtomicInteger totalRequests = new AtomicInteger(0);
-    static AtomicLong    totalBytes    = new AtomicLong(0);
-
-    // ConcurrentHashMap — thread-safe map, multiple threads can write simultaneously
-    static ConcurrentHashMap<String, AtomicInteger> statusCount = new ConcurrentHashMap<>();
-    static ConcurrentHashMap<String, AtomicInteger> ipCount     = new ConcurrentHashMap<>();
-
-    // Each thread processes a chunk of lines
-    static class LogWorker implements Runnable {
-        private final List<String> lines;
-
-        LogWorker(List<String> lines) { this.lines = lines; }
-
-        @Override
-        public void run() {
-            for (String line : lines) {
-                Matcher m = LOG_PATTERN.matcher(line);
-                if (!m.matches()) continue;
-
-                String ip     = m.group(1);
-                String status = m.group(5);
-                String bytes  = m.group(6);
-
-                // Thread-safe updates
-                statusCount.computeIfAbsent(status, k -> new AtomicInteger(0)).incrementAndGet();
-                ipCount.computeIfAbsent(ip, k -> new AtomicInteger(0)).incrementAndGet();
-                if (!bytes.equals("-")) totalBytes.addAndGet(Long.parseLong(bytes));
-                totalRequests.incrementAndGet();
-            }
-        }
-    }
-
-    public static void processMultiThreaded(String filename) throws Exception {
-        System.out.println("\\n=== Multi-Threaded Log Processing ===");
-        long start = System.currentTimeMillis();
-
-        // Read ALL lines into memory first
-        List<String> allLines = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
-            String line;
-            while ((line = br.readLine()) != null) allLines.add(line);
-        }
-
-        int numThreads = Runtime.getRuntime().availableProcessors(); // use all CPU cores
-        int chunkSize  = allLines.size() / numThreads;
-        ExecutorService pool = Executors.newFixedThreadPool(numThreads);
-
-        System.out.println("Using " + numThreads + " threads for " + allLines.size() + " lines");
-
-        // Split lines into chunks and assign one chunk per thread
-        for (int i = 0; i < numThreads; i++) {
-            int from = i * chunkSize;
-            int to   = (i == numThreads - 1) ? allLines.size() : from + chunkSize;
-            List<String> chunk = allLines.subList(from, to);
-            pool.submit(new LogWorker(chunk)); // submit chunk to thread pool
-        }
-
-        pool.shutdown();
-        pool.awaitTermination(30, TimeUnit.SECONDS); // wait for all threads to finish
-
-        long elapsed = System.currentTimeMillis() - start;
-
-        System.out.println("Total Requests : " + totalRequests.get());
-        System.out.println("Total Bytes    : " + totalBytes.get());
-        System.out.println("Time           : " + elapsed + " ms");
-        System.out.println("Status Counts  : " + statusCount);
-    }
-
-    public static void main(String[] args) throws Exception {
-        processMultiThreaded("access.log"); // assumes log file exists
-    }
-}`]
-          }
-        ]
-      }
     ]
   },
   {
@@ -635,576 +186,154 @@ public class MultiThreadedLogProcessor {
     color: "#1B5E20",
     sections: [
       {
-        qnum: "A2-Q1",
-        qtitle: "InetAddress Class — Creation & Getter Methods",
+        qnum: "Q1",
+        qtitle: "InetAddress — Creation Methods, Getters & Address Types",
         content: [
-          {
-            type: "definition",
-            text: "InetAddress: A Java class in java.net that represents an Internet Protocol (IP) address — either IPv4 (32-bit) or IPv6 (128-bit). It combines a hostname and its corresponding IP address. It is abstract; instances are actually Inet4Address or Inet6Address objects."
-          },
-          {
-            type: "heading",
-            text: "Factory Methods to Create InetAddress Objects"
-          },
-          {
-            type: "table",
-            headers: ["Method", "Description", "Example"],
+          { type: "definition", text: "InetAddress: A Java class in java.net representing an IP address — either IPv4 (32-bit, Inet4Address) or IPv6 (128-bit, Inet6Address). It combines a hostname and its corresponding IP. Abstract — actual instances are Inet4Address or Inet6Address." },
+          { type: "heading", text: "Factory Methods" },
+          { type: "table", headers: ["Method", "Description"],
             rows: [
-              ["InetAddress.getByName(host)", "DNS lookup — resolve hostname to IP. Can also pass IP string directly.", "InetAddress.getByName(\"www.google.com\")"],
-              ["InetAddress.getAllByName(host)", "Returns ALL IP addresses for a hostname (CDN sites have many).", "InetAddress.getAllByName(\"www.amazon.com\")"],
-              ["InetAddress.getLocalHost()", "Returns the IP address of the local machine running the program.", "InetAddress.getLocalHost()"],
-              ["InetAddress.getLoopbackAddress()", "Returns 127.0.0.1 (IPv4) or ::1 (IPv6) — the loopback address.", "InetAddress.getLoopbackAddress()"],
-              ["InetAddress.getByAddress(byte[])", "Create InetAddress from a raw byte array (4 bytes for IPv4).", "InetAddress.getByAddress(new byte[]{8,8,8,8})"],
+              ["InetAddress.getByName(host)", "DNS lookup — hostname → IP. Can also pass IP string directly."],
+              ["InetAddress.getAllByName(host)", "Returns ALL IPs for a hostname (CDN sites have many)."],
+              ["InetAddress.getLocalHost()", "IP of the local machine."],
+              ["InetAddress.getLoopbackAddress()", "127.0.0.1 (IPv4) or ::1 (IPv6)"],
+              ["InetAddress.getByAddress(byte[])", "Create from raw bytes (4 bytes for IPv4, 16 for IPv6)."],
             ]
           },
-          {
-            type: "heading",
-            text: "Getter Methods"
-          },
-          {
-            type: "table",
-            headers: ["Method", "Returns", "Example Output"],
+          { type: "heading", text: "Getter Methods" },
+          { type: "table", headers: ["Method", "Returns", "Example"],
             rows: [
-              ["getHostName()", "The hostname (performs reverse DNS if needed)", "\"www.google.com\""],
-              ["getHostAddress()", "The IP address as a String (no DNS lookup)", "\"142.250.195.36\""],
-              ["getAddress()", "Raw IP as byte[] — 4 bytes (IPv4) or 16 bytes (IPv6)", "[142, -6, -61, 36]"],
-              ["getCanonicalHostName()", "Fully qualified domain name (FQDN), triggers reverse DNS", "\"lga34s20-in-f4.1e100.net\""],
-              ["toString()", "Returns hostname + \"/\" + IP", "\"www.google.com/142.250.195.36\""],
+              ["getHostName()", "Hostname (reverse DNS if needed)", "\"www.google.com\""],
+              ["getHostAddress()", "IP as String (no DNS lookup)", "\"142.250.195.36\""],
+              ["getAddress()", "Raw IP as byte[]", "[142, -6, -61, 36] (4 bytes IPv4)"],
+              ["getCanonicalHostName()", "Fully qualified domain name", "\"lga34s20-in-f4.1e100.net\""],
+              ["toString()", "hostname/IP", "\"www.google.com/142.250.195.36\""],
             ]
           },
-          {
-            type: "code",
-            label: "InetAddressMethods.java — All creation & getter methods",
-            lines: [`import java.net.*;
-
-public class InetAddressMethods {
-    public static void main(String[] args) throws Exception {
-
-        // ── Creation Methods ──────────────────────────────────────────
-        InetAddress byName    = InetAddress.getByName("www.google.com");
-        InetAddress localhost  = InetAddress.getLocalHost();
-        InetAddress loopback  = InetAddress.getLoopbackAddress();
-        InetAddress byBytes   = InetAddress.getByAddress(new byte[]{8, 8, 8, 8});
-
-        // ── Getter Methods ────────────────────────────────────────────
-        System.out.println("=== By Name: www.google.com ===");
-        System.out.println("getHostName()         : " + byName.getHostName());
-        System.out.println("getHostAddress()      : " + byName.getHostAddress());
-        System.out.println("getCanonicalHostName(): " + byName.getCanonicalHostName());
-        System.out.println("toString()            : " + byName.toString());
-
-        // Raw byte array representation
-        byte[] rawBytes = byName.getAddress();
-        System.out.print("getAddress() bytes    : ");
-        for (byte b : rawBytes) System.out.print((b & 0xFF) + " "); // & 0xFF → unsigned
-        System.out.println();
-
-        // ── Type checks ────────────────────────────────────────────
-        System.out.println("\\n=== Local Host ===");
-        System.out.println("Local IP: " + localhost.getHostAddress());
-        System.out.println("isLoopbackAddress(): " + localhost.isLoopbackAddress());
-        System.out.println("isSiteLocalAddress(): " + localhost.isSiteLocalAddress()); // 192.168.x.x
-
-        System.out.println("\\n=== Loopback ===");
-        System.out.println("Loopback: " + loopback.getHostAddress()); // 127.0.0.1
-
-        System.out.println("\\n=== From Bytes (8.8.8.8) ===");
-        System.out.println("Google DNS: " + byBytes.getHostAddress());
-
-        // getAllByName — multiple IPs for one host
-        System.out.println("\\n=== All IPs for www.amazon.com ===");
-        InetAddress[] all = InetAddress.getAllByName("www.amazon.com");
-        for (InetAddress addr : all)
-            System.out.println("  " + addr.getHostAddress());
-    }
-}`]
-          }
-        ]
-      },
-      {
-        qnum: "A2-Q2",
-        qtitle: "Address Types — Characteristics of IP Addresses",
-        content: [
-          {
-            type: "explain",
-            text: "Not all IP addresses are created equal. Some are reserved for special purposes — loopback (self), private (local network), multicast (group communication), etc. InetAddress provides isXxx() methods to identify each type."
-          },
-          {
-            type: "table",
-            headers: ["Address Type", "Range", "Purpose", "InetAddress Method"],
+          { type: "heading", text: "Address Types — isXxx() Methods" },
+          { type: "table", headers: ["Type", "Range", "Method"],
             rows: [
-              ["Loopback", "127.0.0.0/8 (IPv4), ::1 (IPv6)", "Points back to the same machine. Used for testing.", "isLoopbackAddress()"],
-              ["Site-Local (Private)", "10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16", "Used within private networks (homes, offices). Not routable on internet.", "isSiteLocalAddress()"],
-              ["Link-Local", "169.254.0.0/16 (IPv4), fe80::/10 (IPv6)", "Auto-assigned when DHCP fails. Only valid on local segment.", "isLinkLocalAddress()"],
-              ["Multicast", "224.0.0.0 – 239.255.255.255 (IPv4)", "One packet received by a GROUP of hosts.", "isMulticastAddress()"],
-              ["Wildcard / Any", "0.0.0.0", "Means 'all local addresses'. Used by servers to listen on all NICs.", "isAnyLocalAddress()"],
-              ["Global (Public)", "Everything else", "Routable on the public internet.", "(none — check if not any of above)"],
+              ["Loopback", "127.0.0.0/8 (IPv4), ::1 (IPv6)", "isLoopbackAddress()"],
+              ["Site-Local (Private LAN)", "10.x.x.x, 172.16.x.x, 192.168.x.x", "isSiteLocalAddress()"],
+              ["Link-Local (APIPA)", "169.254.0.0/16 (auto-assigned when DHCP fails)", "isLinkLocalAddress()"],
+              ["Multicast", "224.0.0.0 – 239.255.255.255", "isMulticastAddress()"],
+              ["Wildcard/Any", "0.0.0.0 — 'all local addresses', used by servers", "isAnyLocalAddress()"],
             ]
           },
-          {
-            type: "code",
-            label: "AddressTypes.java — Identify address characteristics",
-            lines: [`import java.net.*;
-
-public class AddressTypes {
-    static void checkAddress(String host) throws Exception {
-        InetAddress addr = InetAddress.getByName(host);
-        System.out.println("\\n=== " + addr.getHostAddress() + " (" + host + ") ===");
-        System.out.println("  isLoopbackAddress()    : " + addr.isLoopbackAddress());
-        System.out.println("  isSiteLocalAddress()   : " + addr.isSiteLocalAddress()); // private LAN
-        System.out.println("  isLinkLocalAddress()   : " + addr.isLinkLocalAddress());
-        System.out.println("  isMulticastAddress()   : " + addr.isMulticastAddress());
-        System.out.println("  isAnyLocalAddress()    : " + addr.isAnyLocalAddress());
-        System.out.println("  instanceof Inet4Address: " + (addr instanceof Inet4Address));
-        System.out.println("  instanceof Inet6Address: " + (addr instanceof Inet6Address));
-    }
-
-    public static void main(String[] args) throws Exception {
-        checkAddress("127.0.0.1");      // loopback
-        checkAddress("192.168.1.100");  // private / site-local
-        checkAddress("169.254.1.1");    // link-local
-        checkAddress("224.0.0.1");      // multicast
-        checkAddress("8.8.8.8");        // public/global
-        checkAddress("0.0.0.0");        // wildcard
-        checkAddress("::1");            // IPv6 loopback
-        checkAddress("fe80::1");        // IPv6 link-local
-    }
-}
-
-/*
-SAMPLE OUTPUT:
-=== 127.0.0.1 (127.0.0.1) ===
-  isLoopbackAddress()    : true
-  isSiteLocalAddress()   : false
-  isMulticastAddress()   : false
-
-=== 192.168.1.100 (192.168.1.100) ===
-  isSiteLocalAddress()   : true   ← private network
-  isMulticastAddress()   : false
-
-=== 224.0.0.1 (224.0.0.1) ===
-  isMulticastAddress()   : true   ← multicast group
-*/`]
-          }
-        ]
-      },
-      {
-        qnum: "A2-Q3",
-        qtitle: "Testing Reachability of a Node",
-        content: [
-          {
-            type: "explain",
-            text: "InetAddress.isReachable(timeout) tests if a remote host is reachable — like the 'ping' command. Java tries ICMP echo (ping) first; if that fails (due to firewall), it tries TCP on port 7."
-          },
-          {
-            type: "code",
-            label: "ReachabilityTest.java — Test if hosts are reachable",
-            lines: [`import java.net.*;
-import java.io.*;
-
-public class ReachabilityTest {
-    /**
-     * isReachable(timeout): Returns true if host responds within 'timeout' ms.
-     * Uses ICMP echo (ping) or TCP port 7 (echo port).
-     * May return false for firewalled hosts even if they're up.
-     */
-    static void testHost(String host, int timeoutMs) {
-        try {
-            InetAddress addr = InetAddress.getByName(host);
-            long start = System.currentTimeMillis();
-
-            boolean reachable = addr.isReachable(timeoutMs);
-
-            long elapsed = System.currentTimeMillis() - start;
-            System.out.printf("Host: %-20s IP: %-16s Reachable: %-5s Time: %dms%n",
-                host, addr.getHostAddress(), reachable, elapsed);
-
-        } catch (UnknownHostException e) {
-            System.out.println("Cannot resolve: " + host);
-        } catch (IOException e) {
-            System.out.println("Error testing " + host + ": " + e.getMessage());
-        }
-    }
-
-    // Advanced: test using a specific network interface
-    static void testViaInterface(String host, String interfaceName) throws Exception {
-        InetAddress addr = InetAddress.getByName(host);
-        NetworkInterface ni = NetworkInterface.getByName(interfaceName); // e.g., "eth0"
-        if (ni == null) { System.out.println("Interface not found: " + interfaceName); return; }
-
-        // isReachable(NetworkInterface, TTL, timeout)
-        boolean reachable = addr.isReachable(ni, 64, 3000);
-        System.out.println("Via " + interfaceName + ": " + host + " reachable = " + reachable);
-    }
-
-    public static void main(String[] args) throws Exception {
-        int timeout = 3000; // 3 seconds
-        System.out.println("Testing reachability (timeout=" + timeout + "ms):");
-        System.out.println("─".repeat(70));
-
-        testHost("127.0.0.1",    timeout); // loopback — always reachable
-        testHost("8.8.8.8",      timeout); // Google DNS
-        testHost("www.google.com", timeout);
-        testHost("192.168.1.1",  timeout); // Your router (may or may not be up)
-        testHost("999.999.999.999", timeout); // Invalid — UnknownHostException
-    }
-}
-
-/*
-SAMPLE OUTPUT:
-Host: 127.0.0.1              IP: 127.0.0.1        Reachable: true  Time: 1ms
-Host: 8.8.8.8                IP: 8.8.8.8          Reachable: true  Time: 45ms
-Host: www.google.com         IP: 142.250.195.36   Reachable: true  Time: 80ms
-*/`]
-          }
-        ]
-      },
-      {
-        qnum: "A2-Q4",
-        qtitle: "Inet4Address vs Inet6Address",
-        content: [
-          {
-            type: "table",
-            headers: ["Aspect", "Inet4Address", "Inet6Address"],
+          { type: "heading", text: "Inet4Address vs Inet6Address" },
+          { type: "table", headers: ["Aspect", "Inet4Address", "Inet6Address"],
             rows: [
-              ["IP version", "IPv4", "IPv6"],
-              ["Address length", "32 bits (4 bytes)", "128 bits (16 bytes)"],
+              ["Version", "IPv4", "IPv6"],
+              ["Bits", "32 bits (4 bytes)", "128 bits (16 bytes)"],
               ["Format", "Dotted decimal: 192.168.1.1", "Colon-hex: 2001:db8::1"],
-              ["Total addresses", "~4.3 billion", "340 undecillion (3.4 × 10³⁸)"],
-              ["Example", "192.168.0.1", "2001:0db8:85a3:0000:0000:8a2e:0370:7334"],
+              ["Addresses", "~4.3 billion", "340 undecillion"],
               ["Loopback", "127.0.0.1", "::1"],
-              ["Scope methods", "isSiteLocalAddress() etc.", "Additional: isMCGlobal(), isMCNodeLocal(), etc."],
-              ["Java class", "java.net.Inet4Address extends InetAddress", "java.net.Inet6Address extends InetAddress"],
+              ["Check type", "addr instanceof Inet4Address", "addr instanceof Inet6Address"],
             ]
           },
-          {
-            type: "code",
-            label: "Inet4vsInet6.java — Compare both types",
-            lines: [`import java.net.*;
-
-public class Inet4vsInet6 {
-    public static void main(String[] args) throws Exception {
-        // Inet4Address example
-        Inet4Address ipv4 = (Inet4Address) InetAddress.getByName("192.168.1.1");
-        System.out.println("=== IPv4 ===");
-        System.out.println("Address   : " + ipv4.getHostAddress());
-        System.out.println("Byte count: " + ipv4.getAddress().length); // 4
-        System.out.println("Is IPv4?  : " + (ipv4 instanceof Inet4Address)); // true
-
-        // Inet6Address example
-        Inet6Address ipv6 = (Inet6Address) InetAddress.getByName("::1"); // IPv6 loopback
-        System.out.println("\\n=== IPv6 ===");
-        System.out.println("Address   : " + ipv6.getHostAddress());
-        System.out.println("Byte count: " + ipv6.getAddress().length); // 16
-        System.out.println("Is IPv6?  : " + (ipv6 instanceof Inet6Address)); // true
-        System.out.println("Is Loopback?: " + ipv6.isLoopbackAddress()); // true
-
-        // Check all interfaces for both IPv4 and IPv6
-        System.out.println("\\n=== IPs on this machine ===");
-        java.util.Enumeration<NetworkInterface> ifaces = NetworkInterface.getNetworkInterfaces();
-        while (ifaces != null && ifaces.hasMoreElements()) {
-            NetworkInterface ni = ifaces.nextElement();
-            java.util.Enumeration<InetAddress> addrs = ni.getInetAddresses();
-            while (addrs.hasMoreElements()) {
-                InetAddress addr = addrs.nextElement();
-                String version = (addr instanceof Inet4Address) ? "IPv4" : "IPv6";
-                System.out.printf("  %-8s %-15s [%s]%n", ni.getName(), addr.getHostAddress(), version);
-            }
-        }
-    }
-}`]
-          }
         ]
       },
       {
-        qnum: "A2-Q5&Q6",
-        qtitle: "NetworkInterface Class — Factory Methods & Getter Methods",
+        qnum: "Q2",
+        qtitle: "NetworkInterface — Factory Methods & Getter Methods",
         content: [
-          {
-            type: "definition",
-            text: "NetworkInterface: A Java class representing a network interface card (NIC) installed in the machine. It allows you to inspect hardware details (name, MAC address, MTU) and software details (IP addresses assigned) of each network interface."
-          },
-          {
-            type: "heading",
-            text: "Factory Methods (how to get NetworkInterface objects)"
-          },
-          {
-            type: "table",
-            headers: ["Factory Method", "Description"],
+          { type: "definition", text: "NetworkInterface: Represents a network interface card (NIC) installed in the machine. Lets you inspect hardware details (name, MAC, MTU) and software details (IPs assigned to it)." },
+          { type: "table", headers: ["Factory Method", "Description"],
             rows: [
-              ["NetworkInterface.getByName(\"eth0\")", "Get interface by system name (eth0, wlan0, lo on Linux; Wi-Fi, Ethernet on Windows)"],
-              ["NetworkInterface.getByIndex(1)", "Get interface by its numeric system index"],
-              ["NetworkInterface.getByInetAddress(ip)", "Get the interface that has this IP assigned to it"],
-              ["NetworkInterface.getNetworkInterfaces()", "Get an Enumeration of ALL interfaces on the machine"],
+              ["NetworkInterface.getByName(\"eth0\")", "Get interface by system name (eth0, wlan0, lo on Linux)"],
+              ["NetworkInterface.getByIndex(1)", "Get by numeric OS index"],
+              ["NetworkInterface.getByInetAddress(ip)", "Get the interface that has this IP assigned"],
+              ["NetworkInterface.getNetworkInterfaces()", "Enumeration of ALL interfaces on the machine"],
             ]
           },
-          {
-            type: "heading",
-            text: "Important Getter Methods"
-          },
-          {
-            type: "table",
-            headers: ["Method", "Returns"],
+          { type: "table", headers: ["Getter Method", "Returns"],
             rows: [
-              ["getName()", "Short system name: 'eth0', 'wlan0', 'lo'"],
-              ["getDisplayName()", "Human-readable name: 'Intel Wi-Fi 6'"],
-              ["getIndex()", "Numeric index assigned by the OS"],
-              ["getInetAddresses()", "Enumeration of all IP addresses on this interface"],
+              ["getName()", "Short name: 'eth0', 'wlan0', 'lo'"],
+              ["getDisplayName()", "Human-readable: 'Intel Wi-Fi 6'"],
+              ["getInetAddresses()", "All IP addresses (IPv4 and IPv6) on this interface"],
               ["getHardwareAddress()", "MAC address as byte[] (null for loopback/virtual)"],
-              ["getMTU()", "Maximum Transmission Unit — max bytes per packet"],
-              ["isUp()", "Is the interface currently active/connected?"],
-              ["isLoopback()", "Is it the loopback interface (127.0.0.1)?"],
-              ["isVirtual()", "Is it a virtual sub-interface?"],
+              ["getMTU()", "Max Transmission Unit — max bytes per packet (usually 1500)"],
+              ["isUp()", "Is interface currently active/connected?"],
+              ["isLoopback()", "Is it the loopback (127.0.0.1) interface?"],
               ["supportsMulticast()", "Can it send/receive multicast packets?"],
-              ["getSubInterfaces()", "Virtual interfaces nested under this interface"],
             ]
           },
-          {
-            type: "code",
-            label: "NetworkInterfaceDetails.java — Display IP, Name, Display Name, MAC",
-            lines: [`import java.net.*;
-import java.util.*;
-
-public class NetworkInterfaceDetails {
-    public static void main(String[] args) throws Exception {
-        Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-
-        while (interfaces != null && interfaces.hasMoreElements()) {
-            NetworkInterface ni = interfaces.nextElement();
-
-            // Skip interfaces that are down (inactive)
-            if (!ni.isUp()) continue;
-
-            System.out.println("====================================");
-            System.out.println("Name         : " + ni.getName());
-            System.out.println("Display Name : " + ni.getDisplayName());
-            System.out.println("Index        : " + ni.getIndex());
-            System.out.println("MTU          : " + ni.getMTU() + " bytes");
-            System.out.println("Is Loopback  : " + ni.isLoopback());
-            System.out.println("Is Virtual   : " + ni.isVirtual());
-            System.out.println("Multicast    : " + ni.supportsMulticast());
-
-            // MAC Address — format as XX-XX-XX-XX-XX-XX
-            byte[] mac = ni.getHardwareAddress();
-            if (mac != null && mac.length > 0) {
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < mac.length; i++) {
-                    sb.append(String.format("%02X", mac[i]));
-                    if (i < mac.length - 1) sb.append("-");
-                }
-                System.out.println("MAC Address  : " + sb.toString());
-            } else {
-                System.out.println("MAC Address  : N/A (loopback or virtual)");
-            }
-
-            // All IP addresses (IPv4 and IPv6) on this interface
-            Enumeration<InetAddress> addrs = ni.getInetAddresses();
-            while (addrs.hasMoreElements()) {
-                InetAddress addr = addrs.nextElement();
-                String type = (addr instanceof Inet4Address) ? "IPv4" : "IPv6";
-                System.out.println("IP (" + type + ")    : " + addr.getHostAddress());
-            }
-        }
-    }
-}
-
-/*
-SAMPLE OUTPUT:
-====================================
-Name         : lo
-Display Name : Software Loopback Interface 1
-Is Loopback  : true
-MAC Address  : N/A (loopback or virtual)
-IP (IPv4)    : 127.0.0.1
-
-====================================
-Name         : eth0
-Display Name : Intel(R) Ethernet Connection I219-V
-MAC Address  : 1A-2B-3C-4D-5E-6F
-MTU          : 1500 bytes
-IP (IPv4)    : 192.168.1.100
-IP (IPv6)    : fe80::1a2b:3c4d:5e6f%eth0
-*/`]
-          }
         ]
       },
       {
-        qnum: "Lab2-Q2&Q3",
-        qtitle: "Lab: View Source of a Web Page & Check Parts of a URL",
+        qnum: "Lab2",
+        qtitle: "Lab: URL Parts, URI Parts & URLEncoder/Decoder",
         content: [
-          {
-            type: "code",
-            label: "ViewWebSource.java — Read raw HTML of a web page",
-            lines: [`import java.net.*;
-import java.io.*;
+          { type: "diagram", text: `
+URL ANATOMY:
+  https://user:pass@www.example.com:8080/path/page.html?q=java#section2
+  └─┬──┘  └───┬───┘ └──────┬──────┘└─┬┘└──────┬──────┘└──┬──┘└───┬───┘
+ Protocol UserInfo    Host        Port     Path        Query  Fragment
 
-public class ViewWebSource {
-    public static void main(String[] args) throws Exception {
-        String urlStr = "http://www.example.com";
-        URL url = new URL(urlStr);
-
-        // openStream() opens a connection and returns an InputStream of the response body
-        try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(url.openStream()))) {
-            String line;
-            int lineNum = 0;
-            while ((line = reader.readLine()) != null && lineNum < 30) {
-                System.out.println(line);
-                lineNum++;
-            }
-        }
-    }
-}
-
-/*
-OUTPUT: The first 30 lines of the HTML source of example.com
-*/`]
+URL METHODS:          URI METHODS (additional):
+  getProtocol()         getScheme()
+  getUserInfo()         getSchemeSpecificPart()
+  getHost()             getRawQuery() ← encoded form
+  getPort()             getQuery()    ← decoded form
+  getPath()             uri.normalize() → removes . and ..
+  getQuery()            uri.resolve(relative) → resolve relative URI
+  getRef() (fragment)   uri.toURL() → convert to URL` },
+          { type: "table", headers: ["Aspect", "URL", "URI"],
+            rows: [
+              ["Full form", "Uniform Resource LOCATOR", "Uniform Resource IDENTIFIER"],
+              ["Purpose", "Specifies HOW to access a resource (includes protocol)", "Just IDENTIFIES a resource"],
+              ["Scope", "Subset of URI — all URLs are URIs", "Broader — includes URLs and URNs"],
+              ["Methods", "url.openStream(), url.openConnection()", "Cannot open connections directly"],
+              ["Encoding", "Does NOT handle encoding/decoding", "Has getRawXxx() (encoded) and getXxx() (decoded)"],
+            ]
           },
-          {
-            type: "code",
-            label: "URLParts.java — Examine all parts of a URL",
+          { type: "code", label: "URLParts.java + URIParts.java + URLEncoder demo",
             lines: [`import java.net.*;
 
-public class URLParts {
+public class URLPartsDemo {
     public static void main(String[] args) throws Exception {
-        // A full URL for testing:
-        // https://user:pass@www.example.com:8080/path/to/page?key=value&a=b#section1
-        URL url = new URL("https://user:pass@www.example.com:8080/path/to/page?key=value&a=b#section1");
+        // ── URL Parts ────────────────────────────────────────────────
+        URL url = new URL("https://user:pass@www.example.com:8080/path/page?q=java#section");
+        System.out.println("Protocol   : " + url.getProtocol());   // https
+        System.out.println("UserInfo   : " + url.getUserInfo());   // user:pass
+        System.out.println("Host       : " + url.getHost());       // www.example.com
+        System.out.println("Port       : " + url.getPort());       // 8080
+        System.out.println("Default Port: " + url.getDefaultPort()); // 443 for https
+        System.out.println("Path       : " + url.getPath());       // /path/page
+        System.out.println("Query      : " + url.getQuery());      // q=java
+        System.out.println("Ref/Fragment: " + url.getRef());       // section
 
-        System.out.println("Full URL      : " + url.toString());
-        System.out.println("----------------------------");
-        System.out.println("Protocol      : " + url.getProtocol());   // https
-        System.out.println("Authority     : " + url.getAuthority());  // user:pass@www.example.com:8080
-        System.out.println("User Info     : " + url.getUserInfo());   // user:pass
-        System.out.println("Host          : " + url.getHost());       // www.example.com
-        System.out.println("Port          : " + url.getPort());       // 8080
-        System.out.println("Default Port  : " + url.getDefaultPort()); // 443 for https
-        System.out.println("Path          : " + url.getPath());       // /path/to/page
-        System.out.println("File          : " + url.getFile());       // /path/to/page?key=value&a=b
-        System.out.println("Query String  : " + url.getQuery());      // key=value&a=b
-        System.out.println("Ref (Fragment): " + url.getRef());        // section1
-
-        // Relative URL creation
-        URL base     = new URL("https://www.example.com/docs/");
-        URL relative = new URL(base, "intro.html");
-        System.out.println("\\nBase URL      : " + base);
-        System.out.println("Relative URL  : " + relative); // https://www.example.com/docs/intro.html
-    }
-}
-
-/*
-OUTPUT:
-Protocol      : https
-Host          : www.example.com
-Port          : 8080
-Path          : /path/to/page
-Query String  : key=value&a=b
-Ref (Fragment): section1
-*/`]
-          }
-        ]
-      },
-      {
-        qnum: "Lab2-Q4&Q5",
-        qtitle: "Lab: Check Parts of a URI & URLEncoder / URLDecoder",
-        content: [
-          {
-            type: "code",
-            label: "URIParts.java — Examine all parts of a URI",
-            lines: [`import java.net.*;
-
-public class URIParts {
-    public static void main(String[] args) throws Exception {
-        URI uri = new URI("https://user:pass@www.example.com:8080/path?q=hello+world#frag");
-
-        System.out.println("Full URI         : " + uri);
-        System.out.println("Scheme           : " + uri.getScheme());          // https
-        System.out.println("Scheme-Specific  : " + uri.getSchemeSpecificPart());
-        System.out.println("Authority        : " + uri.getAuthority());        // user:pass@host:8080
-        System.out.println("User Info        : " + uri.getUserInfo());         // user:pass
-        System.out.println("Host             : " + uri.getHost());             // www.example.com
-        System.out.println("Port             : " + uri.getPort());             // 8080
-        System.out.println("Path             : " + uri.getPath());             // /path
-        System.out.println("Query            : " + uri.getQuery());            // q=hello+world
-        System.out.println("Raw Query        : " + uri.getRawQuery());         // q=hello+world (encoded)
-        System.out.println("Fragment         : " + uri.getFragment());         // frag
-
-        System.out.println("Is Absolute?     : " + uri.isAbsolute()); // true (has scheme)
-        System.out.println("Is Opaque?       : " + uri.isOpaque());   // false (hierarchical)
-
-        // Resolve a relative URI against a base URI
-        URI base     = new URI("https://www.example.com/docs/");
-        URI relative = new URI("../images/logo.png");
-        URI resolved = base.resolve(relative);
-        System.out.println("\\nResolved URI: " + resolved);
+        // Relative URL (needs a base)
+        URL base = new URL("https://www.example.com/docs/");
+        URL rel  = new URL(base, "../images/logo.png");
+        System.out.println("\\nRelative resolved: " + rel);
         // → https://www.example.com/images/logo.png
 
-        // Normalize: removes . and .. from path
+        // ── URI Parts ────────────────────────────────────────────────
+        URI uri = new URI("https://user:pass@www.example.com:8080/path?q=hello+world#frag");
+        System.out.println("\\nScheme     : " + uri.getScheme());
+        System.out.println("Authority  : " + uri.getAuthority());
+        System.out.println("Host       : " + uri.getHost());
+        System.out.println("RawQuery   : " + uri.getRawQuery()); // encoded
+        System.out.println("Query      : " + uri.getQuery());    // decoded
+        System.out.println("Fragment   : " + uri.getFragment());
+        System.out.println("Is Absolute: " + uri.isAbsolute());
+
         URI messy = new URI("https://example.com/a/b/../c/./d");
-        System.out.println("Normalized: " + messy.normalize());
-        // → https://example.com/a/c/d
+        System.out.println("Normalized : " + messy.normalize()); // /a/c/d
 
-        // Convert URI to URL (only for absolute, non-opaque URIs)
-        URL url = uri.toURL();
-        System.out.println("\\nConverted to URL: " + url);
+        // ── URLEncoder / URLDecoder ──────────────────────────────────
+        String original = "Hello World! City=Kathmandu/Nepal";
+        String encoded  = URLEncoder.encode(original, "UTF-8");
+        String decoded  = URLDecoder.decode(encoded,  "UTF-8");
+        System.out.println("\\nOriginal: " + original);
+        System.out.println("Encoded : " + encoded); // Hello+World%21+City%3DKathmandu%2FNepal
+        System.out.println("Decoded : " + decoded);
     }
-}
-`]
+}`]
           },
-          {
-            type: "code",
-            label: "URLEncoderDecoderDemo.java — Encode and decode URL strings",
-            lines: [`import java.net.*;
-import java.io.*;
-
-public class URLEncoderDecoderDemo {
-    public static void main(String[] args) throws Exception {
-        // WHY ENCODE? URLs can only contain certain safe characters.
-        // Spaces, &, =, special chars must be percent-encoded.
-        // Example: "hello world" → "hello+world" or "hello%20world"
-
-        String original = "Hello World! Name=Ravi & City=Kathmandu/Nepal";
-        System.out.println("Original  : " + original);
-
-        // URLEncoder.encode(string, charset) — replaces unsafe chars
-        // Spaces become '+', special chars become %XX
-        String encoded = URLEncoder.encode(original, "UTF-8");
-        System.out.println("Encoded   : " + encoded);
-        // → Hello+World%21+Name%3DRavi+%26+City%3DKathmandu%2FNepal
-
-        // URLDecoder.decode(string, charset) — reverses the encoding
-        String decoded = URLDecoder.decode(encoded, "UTF-8");
-        System.out.println("Decoded   : " + decoded);
-        // → Hello World! Name=Ravi & City=Kathmandu/Nepal
-
-        System.out.println("\\n--- Practical Example: Building a safe query string ---");
-        String name  = URLEncoder.encode("Hari Bahadur", "UTF-8");
-        String city  = URLEncoder.encode("Pokhara, Nepal", "UTF-8");
-        String query = "https://example.com/search?name=" + name + "&city=" + city;
-        System.out.println("Safe URL: " + query);
-        // → https://example.com/search?name=Hari+Bahadur&city=Pokhara%2C+Nepal
-
-        // Decode it back
-        System.out.println("\\n--- Decoding Query Parameters ---");
-        String[] params = "name=Hari+Bahadur&city=Pokhara%2C+Nepal".split("&");
-        for (String param : params) {
-            String[] kv = param.split("=", 2);
-            System.out.println(kv[0] + " = " + URLDecoder.decode(kv[1], "UTF-8"));
-        }
-    }
-}
-
-/*
-OUTPUT:
-Original  : Hello World! Name=Ravi & City=Kathmandu/Nepal
-Encoded   : Hello+World%21+Name%3DRavi+%26+City%3DKathmandu%2FNepal
-Decoded   : Hello World! Name=Ravi & City=Kathmandu/Nepal
-
-Safe URL: https://example.com/search?name=Hari+Bahadur&city=Pokhara%2C+Nepal
-*/`]
-          }
         ]
-      }
+      },
     ]
   },
   {
@@ -1214,611 +343,238 @@ Safe URL: https://example.com/search?name=Hari+Bahadur&city=Pokhara%2C+Nepal
     color: "#4A148C",
     sections: [
       {
-        qnum: "A3-Q1&Q2",
-        qtitle: "URL Class — Absolute/Relative URLs & Parts",
+        qnum: "Q1",
+        qtitle: "Proxy Class, ProxySelector & Authenticator",
         content: [
-          {
-            type: "definition",
-            text: "URL (Uniform Resource Locator): A reference that identifies a specific resource on the internet and specifies HOW to access it. It includes the protocol, host, port, path, query, and fragment."
-          },
-          {
-            type: "heading",
-            text: "Anatomy of a URL"
-          },
-          {
-            type: "diagram",
-            text: `
-  https://user:pass@www.example.com:8080/path/page.html?q=java#section2
-  └─┬──┘  └───┬───┘ └──────┬──────┘└─┬┘└──────┬──────┘└──┬──┘└───┬───┘
- Protocol UserInfo    Host         Port     Path        Query  Fragment`
-          },
-          {
-            type: "table",
-            headers: ["Part", "Method", "Example Value"],
-            rows: [
-              ["Protocol/Scheme", "getProtocol()", "\"https\""],
-              ["User Info", "getUserInfo()", "\"user:pass\""],
-              ["Host", "getHost()", "\"www.example.com\""],
-              ["Port", "getPort()", "8080 (-1 if not specified)"],
-              ["Default Port", "getDefaultPort()", "443 for https, 80 for http"],
-              ["Path", "getPath()", "\"/path/page.html\""],
-              ["File (path+query)", "getFile()", "\"/path/page.html?q=java\""],
-              ["Query", "getQuery()", "\"q=java\""],
-              ["Fragment/Ref", "getRef()", "\"section2\""],
-              ["Authority", "getAuthority()", "\"user:pass@www.example.com:8080\""],
-            ]
-          },
-          {
-            type: "heading",
-            text: "Absolute vs Relative URLs"
-          },
-          {
-            type: "table",
-            headers: ["Type", "Description", "Example"],
-            rows: [
-              ["Absolute URL", "Contains all parts — protocol, host, path. Self-contained.", "https://www.example.com/docs/intro.html"],
-              ["Relative URL", "Only contains path relative to a base URL. No protocol/host.", "../images/logo.png OR /about.html OR page2.html"],
-            ]
-          },
-          {
-            type: "code",
-            label: "URLCreation.java — Absolute and relative URL creation",
-            lines: [`import java.net.*;
-
-public class URLCreation {
-    public static void main(String[] args) throws Exception {
-        // Absolute URL — complete, self-contained
-        URL abs1 = new URL("https://www.example.com:8080/docs/index.html?tab=2#intro");
-
-        // Construct from parts: new URL(protocol, host, port, file)
-        URL abs2 = new URL("https", "www.example.com", 443, "/api/data");
-
-        // Construct from parts: new URL(protocol, host, file) — uses default port
-        URL abs3 = new URL("http", "www.example.com", "/search?q=java");
-
-        System.out.println("abs1: " + abs1);
-        System.out.println("abs2: " + abs2);
-        System.out.println("abs3: " + abs3);
-
-        // Relative URL — needs a base to be meaningful
-        URL base = new URL("https://www.example.com/docs/chapter1/");
-
-        URL rel1 = new URL(base, "page2.html");        // same directory
-        URL rel2 = new URL(base, "../chapter2/p1.html"); // parent directory
-        URL rel3 = new URL(base, "/index.html");       // root of same host
-        URL rel4 = new URL(base, "https://other.com"); // absolute overrides base
-
-        System.out.println("\\nRelative resolutions:");
-        System.out.println("rel1: " + rel1); // https://www.example.com/docs/chapter1/page2.html
-        System.out.println("rel2: " + rel2); // https://www.example.com/docs/chapter2/p1.html
-        System.out.println("rel3: " + rel3); // https://www.example.com/index.html
-        System.out.println("rel4: " + rel4); // https://other.com
-    }
-}`]
-          }
-        ]
-      },
-      {
-        qnum: "A3-Q3&Q4",
-        qtitle: "URI Class — Differences from URL & Parts",
-        content: [
-          {
-            type: "table",
-            headers: ["Aspect", "URL", "URI"],
-            rows: [
-              ["Full form", "Uniform Resource LOCATOR", "Uniform Resource IDENTIFIER"],
-              ["Purpose", "How to ACCESS a resource (includes protocol)", "Just IDENTIFIES a resource (may not be locatable)"],
-              ["Scope", "Subset of URI — all URLs are URIs", "Broader — URIs include URLs and URNs"],
-              ["Methods", "Can open connections: url.openStream()", "Cannot directly open connections"],
-              ["Encoding", "Does NOT handle encoding/decoding", "Has getRawXxx() (encoded) AND getXxx() (decoded)"],
-              ["Parsing", "Less strict — may accept some invalid URIs", "Strictly RFC 2396 compliant"],
-              ["Conversion", "uri.toURL() — convert URI to URL", "url.toURI() — convert URL to URI"],
-              ["Use case", "Network access (HTTP, FTP)", "Canonical resource identification (e.g., XML namespaces, RDF)"],
-            ]
-          },
-          {
-            type: "tip",
-            label: "RULE",
-            text: "All URLs are URIs, but not all URIs are URLs. A URN like 'urn:isbn:0-486-27557-4' is a URI but NOT a URL — it identifies a book but doesn't tell you how to get it."
-          }
-        ]
-      },
-      {
-        qnum: "A3-Q7",
-        qtitle: "Proxy Class & ProxySelector Class",
-        content: [
-          {
-            type: "definition",
-            text: "Proxy: A server that acts as an intermediary between a client and the internet. When you connect through a proxy, your request goes to the proxy first, then the proxy forwards it to the target server. Proxies are used for caching, security, logging, and bypassing firewalls."
-          },
-          {
-            type: "table",
-            headers: ["Proxy Type", "Constant", "Description"],
+          { type: "definition", text: "Proxy: A server acting as intermediary between client and internet. Requests go to proxy first, then proxy forwards to target. Used for caching, security, logging, and bypassing firewalls." },
+          { type: "table", headers: ["Proxy Type", "Constant", "Description"],
             rows: [
               ["Direct (no proxy)", "Proxy.NO_PROXY", "Connect directly without any proxy"],
               ["HTTP Proxy", "Proxy.Type.HTTP", "For HTTP/HTTPS web traffic. Most common."],
-              ["SOCKS Proxy", "Proxy.Type.SOCKS", "Lower-level. Handles TCP/UDP streams. Used for all protocols."],
+              ["SOCKS Proxy", "Proxy.Type.SOCKS", "Lower-level. Handles any TCP/UDP stream."],
             ]
           },
-          {
-            type: "code",
-            label: "ProxyDemo.java — Connect through an HTTP proxy",
-            lines: [`import java.net.*;
-import java.io.*;
+          { type: "code", label: "ProxyDemo.java + AuthenticatorDemo.java",
+            lines: [`import java.net.*; import java.io.*;
 
-public class ProxyDemo {
-    public static void main(String[] args) throws Exception {
-
-        // ── PROXY CLASS ───────────────────────────────────────────────
-        // Create a proxy object pointing to proxy server at 192.168.1.254:3128
+public class ProxyAuthDemo {
+    // ── PROXY: Connect through HTTP proxy ───────────────────────────
+    static void proxyDemo() throws Exception {
         Proxy proxy = new Proxy(Proxy.Type.HTTP,
             new InetSocketAddress("192.168.1.254", 3128));
-
         URL url = new URL("http://www.example.com");
-
-        // Open connection THROUGH the proxy
-        // Without proxy: url.openConnection()
-        // With proxy:    url.openConnection(proxy)
-        URLConnection conn = url.openConnection(proxy);
-        conn.connect();
+        URLConnection conn = url.openConnection(proxy); // connect via proxy
         System.out.println("Connected via proxy!");
 
-        // ── DIRECT CONNECTION (no proxy) ─────────────────────────────
-        // Use Proxy.NO_PROXY to explicitly bypass any system proxy settings
+        // Bypass proxy explicitly:
         URLConnection direct = url.openConnection(Proxy.NO_PROXY);
-        System.out.println("Connected directly!");
 
-        // ── PROXY SELECTOR ───────────────────────────────────────────
-        // ProxySelector automatically selects the right proxy for each URL
-        // Useful when different URLs need different proxies
-
+        // ProxySelector — auto-selects proxy per URL
         ProxySelector.setDefault(new ProxySelector() {
             @Override
             public java.util.List<Proxy> select(URI uri) {
-                java.util.List<Proxy> proxies = new java.util.ArrayList<>();
-                // Use proxy only for HTTP, not for localhost
-                if ("http".equals(uri.getScheme()) && !uri.getHost().equals("localhost")) {
-                    proxies.add(new Proxy(Proxy.Type.HTTP,
-                        new InetSocketAddress("proxy.company.com", 8080)));
-                } else {
-                    proxies.add(Proxy.NO_PROXY); // direct for all others
-                }
-                return proxies;
+                java.util.List<Proxy> list = new java.util.ArrayList<>();
+                if ("http".equals(uri.getScheme()) && !uri.getHost().equals("localhost"))
+                    list.add(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("proxy.corp.com", 8080)));
+                else
+                    list.add(Proxy.NO_PROXY);
+                return list;
             }
-
             @Override
             public void connectFailed(URI uri, java.net.SocketAddress sa, IOException e) {
-                System.err.println("Proxy failed for: " + uri + " via " + sa);
+                System.err.println("Proxy failed: " + uri);
             }
         });
-
-        // Now ALL URL connections automatically use your custom ProxySelector
-        URL testURL = new URL("http://www.google.com");
-        URLConnection autoConn = testURL.openConnection(); // ProxySelector selects automatically
     }
-}`]
-          }
-        ]
-      },
-      {
-        qnum: "A3-Q9",
-        qtitle: "Authenticator & PasswordAuthentication Classes",
-        content: [
-          {
-            type: "definition",
-            text: "Authenticator: An abstract class that handles authentication challenges from servers. When a server returns HTTP 401 (Unauthorized) or 407 (Proxy Auth Required), Java calls your Authenticator subclass to get credentials. PasswordAuthentication is a simple container for username + password."
-          },
-          {
-            type: "code",
-            label: "AuthenticatorDemo.java — Handle HTTP authentication",
-            lines: [`import java.net.*;
-import java.io.*;
 
-public class AuthenticatorDemo {
-
-    // Step 1: Subclass Authenticator and override getPasswordAuthentication()
+    // ── AUTHENTICATOR: Handle HTTP 401 challenges ────────────────────
     static class MyAuthenticator extends Authenticator {
-        private String username;
-        private char[] password;
-
-        MyAuthenticator(String username, String password) {
-            this.username = username;
-            this.password = password.toCharArray();
-        }
-
         @Override
         protected PasswordAuthentication getPasswordAuthentication() {
-            // Java calls this automatically when server sends 401 Unauthorized
-            System.out.println("Authentication requested by: " + getRequestingHost());
-            System.out.println("Realm (security zone)      : " + getRequestingPrompt());
-            System.out.println("Request type               : " + getRequestorType()); // SERVER or PROXY
-            System.out.println("Auth scheme                : " + getRequestingScheme()); // Basic, Digest
-
-            // Return credentials — Java sends these to the server
-            return new PasswordAuthentication(username, password);
+            System.out.println("Auth requested by: " + getRequestingHost());
+            System.out.println("Realm: " + getRequestingPrompt());
+            System.out.println("Scheme: " + getRequestingScheme()); // Basic, Digest
+            return new PasswordAuthentication("myuser", "mypassword".toCharArray());
         }
     }
 
     public static void main(String[] args) throws Exception {
-        // Step 2: Register your authenticator globally
-        // All future URL connections will use this automatically
-        Authenticator.setDefault(new MyAuthenticator("myuser", "mypassword"));
-
-        // Step 3: Connect to a password-protected URL
-        // Java automatically calls getPasswordAuthentication() when server asks
-        try {
-            URL url = new URL("http://httpbin.org/basic-auth/myuser/mypassword");
-            URLConnection conn = url.openConnection();
-            BufferedReader reader = new BufferedReader(
-                new InputStreamReader(conn.getInputStream()));
-            String line;
-            while ((line = reader.readLine()) != null)
-                System.out.println(line);
-            reader.close();
-        } catch (IOException e) {
-            System.out.println("Auth error: " + e.getMessage());
-        }
+        // Register globally — called automatically when server returns 401
+        Authenticator.setDefault(new MyAuthenticator());
+        proxyDemo();
     }
-}
-
-/*
-When the server sends:
-  HTTP/1.1 401 Unauthorized
-  WWW-Authenticate: Basic realm="My Secure Area"
-
-Java calls getPasswordAuthentication() → you return credentials →
-Java retries with:
-  Authorization: Basic bXl1c2VyOm15cGFzc3dvcmQ=  (Base64 encoded)
-*/`]
-          }
-        ]
-      },
-      {
-        qnum: "Lab3-Q1",
-        qtitle: "Lab: CookiePolicy that Blocks .gov Domains",
-        content: [
-          {
-            type: "explain",
-            text: "Java's CookieManager + CookiePolicy allows you to programmatically control which cookies your Java HTTP client accepts. This is useful in automated tools, scrapers, and security-aware clients."
+}`]
           },
-          {
-            type: "code",
-            label: "CustomCookiePolicy.java — Block .gov cookies, allow others",
+          { type: "heading", text: "CookiePolicy — Block .gov Domains" },
+          { type: "code", label: "CustomCookiePolicy.java",
             lines: [`import java.net.*;
-import java.io.*;
 
 public class CustomCookiePolicy {
-
-    // Custom CookiePolicy: blocks .gov domains, allows everything else
-    static class BlockGovCookiePolicy implements CookiePolicy {
+    static class BlockGovPolicy implements CookiePolicy {
         @Override
         public boolean shouldAccept(URI uri, HttpCookie cookie) {
-            String host = uri.getHost().toLowerCase();
-
-            // Block cookies from any .gov domain
-            if (host.endsWith(".gov")) {
-                System.out.println("  [BLOCKED] Cookie from gov domain: " + host
-                                 + " | Cookie: " + cookie.getName() + "=" + cookie.getValue());
+            if (uri.getHost().toLowerCase().endsWith(".gov")) {
+                System.out.println("BLOCKED: " + cookie.getName() + " from " + uri.getHost());
                 return false;
             }
-
-            // Accept cookies from all other domains
-            System.out.println("  [ACCEPTED] Cookie from: " + host
-                             + " | Cookie: " + cookie.getName() + "=" + cookie.getValue());
+            System.out.println("ACCEPTED: " + cookie.getName() + " from " + uri.getHost());
             return true;
         }
     }
 
     public static void main(String[] args) throws Exception {
-        // Create a CookieManager with our custom policy
-        CookieManager cookieManager = new CookieManager(null, new BlockGovCookiePolicy());
+        CookieManager cm = new CookieManager(null, new BlockGovPolicy());
+        CookieHandler.setDefault(cm);
 
-        // Install it as the system-wide cookie handler
-        // All subsequent URLConnection requests use this
-        CookieHandler.setDefault(cookieManager);
+        // Built-in policies:
+        // CookiePolicy.ACCEPT_ALL             — accept all cookies
+        // CookiePolicy.ACCEPT_NONE            — reject all
+        // CookiePolicy.ACCEPT_ORIGINAL_SERVER — no 3rd-party cookies
 
-        // Test with some URLs — cookies from these would be filtered
-        String[] urls = {
-            "http://www.example.com",
-            "http://www.google.com"
-            // If you had access, "http://www.irs.gov" cookies would be blocked
-        };
-
-        for (String urlStr : urls) {
-            try {
-                System.out.println("\\nConnecting to: " + urlStr);
-                URL url = new URL(urlStr);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("GET");
-                conn.connect();
-                System.out.println("Status: " + conn.getResponseCode());
-                conn.disconnect();
-            } catch (Exception e) {
-                System.out.println("Error: " + e.getMessage());
-            }
-        }
-
-        // Show all accepted cookies in the cookie store
-        System.out.println("\\n=== Stored Cookies ===");
-        CookieStore store = cookieManager.getCookieStore();
-        for (HttpCookie cookie : store.getCookies()) {
-            System.out.println("  " + cookie.getName() + " = " + cookie.getValue()
-                + " | Domain: " + cookie.getDomain()
-                + " | Expires: " + (cookie.getMaxAge() == -1 ? "session" : cookie.getMaxAge() + "s"));
-        }
-
-        // CookiePolicy constants you can also use:
-        // CookiePolicy.ACCEPT_ALL    — accept all cookies
-        // CookiePolicy.ACCEPT_NONE   — reject all cookies
-        // CookiePolicy.ACCEPT_ORIGINAL_SERVER — only accept from same server (no 3rd party)
-        CookieManager strict = new CookieManager(null, CookiePolicy.ACCEPT_ORIGINAL_SERVER);
-        System.out.println("\\nStrict manager created (no 3rd party cookies).");
+        // After connecting, view stored cookies:
+        CookieStore store = cm.getCookieStore();
+        for (HttpCookie c : store.getCookies())
+            System.out.println(c.getName() + "=" + c.getValue() + " domain=" + c.getDomain());
     }
 }`]
-          }
+          },
         ]
-      }
+      },
     ]
   },
   {
     id: "u4",
-    title: "Unit 4 — HTTP, URLConnection & Headers",
-    badge: "Assignment 4 & 5 + Lab 4",
+    title: "Unit 4 — HTTP, URLConnection & HttpURLConnection",
+    badge: "Assignments 4–5 + Lab 4",
     color: "#B71C1C",
     sections: [
       {
-        qnum: "A4-Q1",
-        qtitle: "HTTP Protocol Explained",
+        qnum: "Q1",
+        qtitle: "HTTP Protocol — Request/Response, Status Codes & Methods",
         content: [
-          {
-            type: "definition",
-            text: "HTTP (HyperText Transfer Protocol): The application-layer protocol that powers the World Wide Web. It defines how clients (browsers, Java apps) send requests to servers and how servers send back responses. HTTP is stateless — each request is independent."
-          },
-          {
-            type: "heading",
-            text: "HTTP Request Structure"
-          },
-          {
-            type: "diagram",
-            text: `
-GET /index.html HTTP/1.1          ← Request Line (Method + Path + Version)
-Host: www.example.com             ← Required Header
-Accept: text/html                 ← Optional Headers
-User-Agent: Java/11.0
-Connection: keep-alive
-                                  ← Blank line separates headers from body
-[request body — empty for GET, form data for POST]`
-          },
-          {
-            type: "heading",
-            text: "HTTP Response Structure"
-          },
-          {
-            type: "diagram",
-            text: `
-HTTP/1.1 200 OK                   ← Status Line (Version + Code + Message)
-Content-Type: text/html; charset=UTF-8  ← Response Headers
-Content-Length: 1234
-Date: Mon, 01 Jan 2025 12:00:00 GMT
-                                  ← Blank line
-<html>...</html>                  ← Response Body`
-          },
-          {
-            type: "heading",
-            text: "Common HTTP Status Codes"
-          },
-          {
-            type: "table",
-            headers: ["Code", "Name", "Meaning"],
+          { type: "definition", text: "HTTP (HyperText Transfer Protocol): The application-layer protocol powering the Web. Defines how clients send requests and servers send responses. HTTP is STATELESS — each request is fully independent." },
+          { type: "diagram", text: `
+HTTP REQUEST STRUCTURE:
+  GET /index.html HTTP/1.1         ← Request Line: Method + Path + Version
+  Host: www.example.com            ← Required header
+  User-Agent: Java/11              ← Optional headers
+  Accept: text/html
+                                   ← Blank line separates headers from body
+  [request body — empty for GET, form data for POST]
+
+HTTP RESPONSE STRUCTURE:
+  HTTP/1.1 200 OK                  ← Status Line: Version + Code + Message
+  Content-Type: text/html; charset=UTF-8
+  Content-Length: 1234
+                                   ← Blank line
+  <html>...</html>                 ← Response Body` },
+          { type: "table", headers: ["Status Code", "Name", "Meaning"],
             rows: [
-              ["200", "OK", "Request succeeded. Body contains the requested resource."],
-              ["201", "Created", "Resource was successfully created (after POST)."],
-              ["301", "Moved Permanently", "Resource moved to a new URL. Client should update bookmarks."],
-              ["302", "Found (Redirect)", "Temporary redirect. Client should follow Location header."],
-              ["304", "Not Modified", "Client's cached version is still fresh. No body returned."],
-              ["400", "Bad Request", "Client sent malformed or invalid request."],
-              ["401", "Unauthorized", "Authentication required. Will send WWW-Authenticate header."],
-              ["403", "Forbidden", "Server understood but refuses. Authentication won't help."],
-              ["404", "Not Found", "Requested resource does not exist on the server."],
-              ["500", "Internal Server Error", "Server encountered an unexpected error."],
-              ["503", "Service Unavailable", "Server overloaded or down for maintenance."],
+              ["200", "OK", "Request succeeded"],
+              ["201", "Created", "Resource created (after POST)"],
+              ["301", "Moved Permanently", "Resource moved. Client should update bookmarks."],
+              ["302", "Found (Redirect)", "Temporary redirect. Follow Location header."],
+              ["304", "Not Modified", "Client's cache is fresh. No body returned."],
+              ["400", "Bad Request", "Client sent malformed request"],
+              ["401", "Unauthorized", "Authentication required (WWW-Authenticate header sent)"],
+              ["403", "Forbidden", "Server refuses; auth won't help"],
+              ["404", "Not Found", "Resource doesn't exist"],
+              ["500", "Internal Server Error", "Unexpected server error"],
             ]
           },
-          {
-            type: "heading",
-            text: "HTTP Methods (Verbs)"
-          },
-          {
-            type: "table",
-            headers: ["Method", "Purpose", "Has Body?", "Idempotent?"],
+          { type: "table", headers: ["HTTP Method", "Purpose", "Has Body?", "Idempotent?"],
             rows: [
-              ["GET", "Retrieve a resource. Never changes server state.", "No", "Yes"],
-              ["POST", "Submit data to create/update a resource.", "Yes", "No"],
-              ["PUT", "Replace an entire resource.", "Yes", "Yes"],
-              ["DELETE", "Delete a resource.", "No", "Yes"],
-              ["HEAD", "Like GET but returns only headers (no body). Used to check if resource exists.", "No", "Yes"],
+              ["GET", "Retrieve resource. Never changes state.", "No", "Yes"],
+              ["POST", "Submit data — create/update resource.", "Yes", "No"],
+              ["PUT", "Replace entire resource.", "Yes", "Yes"],
+              ["DELETE", "Delete resource.", "No", "Yes"],
+              ["HEAD", "GET but only headers returned (no body). Check if resource exists.", "No", "Yes"],
+              ["PATCH", "Partially update resource (only changed fields).", "Yes", "No"],
               ["OPTIONS", "Ask server what methods are allowed for a URL.", "No", "Yes"],
-              ["PATCH", "Partially update a resource (only changed fields).", "Yes", "No"],
             ]
-          }
+          },
+          { type: "heading", text: "Cookie Attributes" },
+          { type: "table", headers: ["Attribute", "Description"],
+            rows: [
+              ["Name=Value", "The actual data: sessionId=abc123"],
+              ["Domain", "Which domains receive this cookie. .example.com includes subdomains."],
+              ["Path", "URL path prefix that must match: Path=/app/"],
+              ["Max-Age", "Seconds until cookie expires. 0 = delete immediately."],
+              ["Secure", "Cookie ONLY sent over HTTPS — never over HTTP."],
+              ["HttpOnly", "JS cannot read this cookie. Prevents XSS session theft."],
+              ["SameSite", "Controls cross-site sending: Strict / Lax / None."],
+            ]
+          },
+          { type: "warning", text: "ALWAYS use HttpOnly for session cookies. If JavaScript can read your session cookie, XSS attacks can steal it. ALWAYS use Secure for sensitive cookies — don't send tokens over plain HTTP." },
         ]
       },
       {
-        qnum: "A4-Q4",
-        qtitle: "Cookies — Attributes & Control",
+        qnum: "Q2",
+        qtitle: "URLConnection & HttpURLConnection — GET and POST",
         content: [
-          {
-            type: "definition",
-            text: "Cookie: A small piece of data (name=value pair) that a server sends to the browser/client. The client stores it and sends it back with every subsequent request to the same domain. Used to maintain state (sessions, preferences, tracking) in stateless HTTP."
-          },
-          {
-            type: "table",
-            headers: ["Cookie Attribute", "Description", "Example"],
+          { type: "definition", text: "URLConnection: Abstract class representing a connection to a URL. url.openConnection() returns one. For http:// URLs, cast to HttpURLConnection for HTTP-specific features: request methods, response codes, redirects." },
+          { type: "table", headers: ["Step", "Code", "Description"],
             rows: [
-              ["Name=Value", "The actual data stored in the cookie", "sessionId=abc123"],
-              ["Domain", "Which domains receive this cookie. Subdomains included if starts with dot.", "Domain=.example.com"],
-              ["Path", "URL path prefix that must match for cookie to be sent.", "Path=/app/"],
-              ["Max-Age", "Seconds until cookie expires. Negative = session cookie. 0 = delete.", "Max-Age=3600 (1 hour)"],
-              ["Expires", "Absolute expiry date (older format, Max-Age preferred)", "Expires=Mon, 01 Jan 2026..."],
-              ["Secure", "Cookie ONLY sent over HTTPS connections. Never over HTTP.", "Secure"],
-              ["HttpOnly", "JavaScript cannot read this cookie. Prevents XSS theft of session cookies.", "HttpOnly"],
-              ["SameSite", "Controls cross-site cookie sending. Strict/Lax/None.", "SameSite=Strict"],
-            ]
-          },
-          {
-            type: "warning",
-            text: "ALWAYS use HttpOnly for session cookies — if JavaScript can read your session cookie, an XSS attack can steal it. ALWAYS use Secure for sensitive cookies — don't send session tokens over plain HTTP."
-          }
-        ]
-      },
-      {
-        qnum: "A5-Q1&Q2",
-        qtitle: "URLConnection Class — Usage & Reading Data",
-        content: [
-          {
-            type: "definition",
-            text: "URLConnection: An abstract class representing a connection to a URL. url.openConnection() returns a URLConnection (or HttpURLConnection for http:// URLs). It lets you configure the request (headers, timeouts), then read the response (headers, body stream)."
-          },
-          {
-            type: "heading",
-            text: "Basic Steps to Use URLConnection"
-          },
-          {
-            type: "table",
-            headers: ["Step", "Code", "Description"],
-            rows: [
-              ["1. Create URL", "URL url = new URL(urlString)", "Parse the URL string"],
-              ["2. Open Connection", "URLConnection conn = url.openConnection()", "Creates connection object (not yet connected)"],
-              ["3. Configure", "conn.setRequestProperty(key, value)", "Set headers, timeouts BEFORE connecting"],
+              ["1. Create URL", "new URL(string)", "Parse the URL string"],
+              ["2. Open Connection", "url.openConnection()", "Creates connection object (not yet connected)"],
+              ["3. Configure", "conn.setRequestProperty(k, v)", "Set headers, timeouts BEFORE connecting"],
               ["4. Connect", "conn.connect()", "Establishes actual TCP connection"],
-              ["5. Read headers", "conn.getContentType(), conn.getHeaderField(name)", "Examine response headers"],
+              ["5. Read headers", "conn.getContentType()", "Examine response headers"],
               ["6. Read body", "conn.getInputStream()", "Stream response body content"],
-              ["7. Close", "stream.close()", "Always close streams to release resources"],
+              ["7. Close", "stream.close()", "Always close to release resources"],
             ]
           },
-          {
-            type: "code",
-            label: "URLConnectionDemo.java — Read a URL with URLConnection",
-            lines: [`import java.net.*;
-import java.io.*;
-import java.nio.charset.*;
-
-public class URLConnectionDemo {
-    public static void main(String[] args) throws Exception {
-        URL url = new URL("https://www.example.com");
-
-        // openConnection() creates the URLConnection but doesn't connect yet
-        URLConnection conn = url.openConnection();
-
-        // ── Configure BEFORE connect() ─────────────────────────────
-        conn.setConnectTimeout(5000);  // 5 sec timeout to establish TCP connection
-        conn.setReadTimeout(10000);    // 10 sec timeout waiting for data
-        conn.setRequestProperty("User-Agent", "MyJavaApp/1.0");
-        conn.setRequestProperty("Accept", "text/html,application/xhtml+xml");
-        conn.setRequestProperty("Accept-Language", "en-US");
-
-        // ── Connect ────────────────────────────────────────────────
-        conn.connect();
-
-        // ── Read Response Headers ──────────────────────────────────
-        System.out.println("Content-Type   : " + conn.getContentType());
-        System.out.println("Content-Length : " + conn.getContentLength() + " bytes");
-        System.out.println("Last-Modified  : " + new java.util.Date(conn.getLastModified()));
-
-        // Read the correct charset from Content-Type header
-        String contentType = conn.getContentType();
-        String charset = "UTF-8"; // default
-        if (contentType != null && contentType.contains("charset=")) {
-            charset = contentType.substring(contentType.indexOf("charset=") + 8).trim();
-        }
-        System.out.println("Charset        : " + charset);
-
-        // ── Read Response Body ─────────────────────────────────────
-        System.out.println("\\n--- Page Content (first 500 chars) ---");
-        try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(conn.getInputStream(), charset))) {
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                sb.append(line).append("\\n");
-                if (sb.length() > 500) break;
-            }
-            System.out.println(sb.substring(0, Math.min(500, sb.length())));
-        }
-    }
-}`]
-          }
-        ]
-      },
-      {
-        qnum: "A5-Q7",
-        qtitle: "HttpURLConnection — Instantiation & Request Methods",
-        content: [
-          {
-            type: "explain",
-            text: "HttpURLConnection extends URLConnection with HTTP-specific features: request methods (GET, POST, etc.), response codes, redirects, and chunked transfer. You get it by casting url.openConnection() when the URL is http:// or https://."
-          },
-          {
-            type: "code",
-            label: "HttpURLConnectionDemo.java — GET and POST examples",
-            lines: [`import java.net.*;
-import java.io.*;
+          { type: "code", label: "HttpURLConnectionDemo.java — GET and POST",
+            lines: [`import java.net.*; import java.io.*;
 
 public class HttpURLConnectionDemo {
 
     // ── GET Request ──────────────────────────────────────────────────
     static void doGet(String urlStr) throws Exception {
         URL url = new URL(urlStr);
-        // Cast to HttpURLConnection for HTTP-specific features
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-
-        conn.setRequestMethod("GET");  // default is GET, but explicit is clearer
+        conn.setRequestMethod("GET");
         conn.setRequestProperty("User-Agent", "Java/11");
         conn.setConnectTimeout(5000);
         conn.setReadTimeout(10000);
-        conn.setInstanceFollowRedirects(true); // auto-follow 301/302 redirects
+        conn.setInstanceFollowRedirects(true); // auto-follow 301/302
 
-        int responseCode = conn.getResponseCode(); // triggers the actual HTTP request
-        System.out.println("[GET] Status: " + responseCode + " " + conn.getResponseMessage());
+        int code = conn.getResponseCode();
+        System.out.println("GET Status: " + code + " " + conn.getResponseMessage());
+        System.out.println("Content-Type: " + conn.getContentType());
+        System.out.println("Last-Modified: " + new java.util.Date(conn.getLastModified()));
 
-        if (responseCode == HttpURLConnection.HTTP_OK) { // 200
+        // Read all response headers
+        conn.getHeaderFields().forEach((k, v) -> System.out.println(k + " : " + v));
+
+        if (code == HttpURLConnection.HTTP_OK) {
             try (BufferedReader br = new BufferedReader(
                     new InputStreamReader(conn.getInputStream(), "UTF-8"))) {
                 String line;
                 while ((line = br.readLine()) != null) System.out.println(line);
             }
         }
-        conn.disconnect(); // release the underlying TCP connection
+        conn.disconnect();
     }
 
     // ── POST Request ─────────────────────────────────────────────────
     static void doPost(String urlStr, String jsonBody) throws Exception {
-        URL url = new URL(urlStr);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-
+        HttpURLConnection conn = (HttpURLConnection) new URL(urlStr).openConnection();
         conn.setRequestMethod("POST");
         conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
         conn.setRequestProperty("Accept", "application/json");
+        conn.setDoOutput(true); // REQUIRED to enable writing request body
 
-        // setDoOutput(true) enables writing to the request body
-        // Required for POST, PUT, PATCH
-        conn.setDoOutput(true);
-
-        // Write request body
         try (OutputStream os = conn.getOutputStream();
-             OutputStreamWriter writer = new OutputStreamWriter(os, "UTF-8")) {
-            writer.write(jsonBody);
-            writer.flush();
+             OutputStreamWriter w = new OutputStreamWriter(os, "UTF-8")) {
+            w.write(jsonBody);
         }
 
-        int responseCode = conn.getResponseCode();
-        System.out.println("[POST] Status: " + responseCode + " " + conn.getResponseMessage());
+        int code = conn.getResponseCode();
+        System.out.println("POST Status: " + code);
 
-        // getErrorStream() returns response body even for 4xx/5xx errors
-        InputStream stream = (responseCode >= 200 && responseCode < 300)
-            ? conn.getInputStream()
-            : conn.getErrorStream();
-
+        // getErrorStream() returns body even for 4xx/5xx errors
+        InputStream stream = (code < 400) ? conn.getInputStream() : conn.getErrorStream();
         try (BufferedReader br = new BufferedReader(new InputStreamReader(stream, "UTF-8"))) {
             String line;
             while ((line = br.readLine()) != null) System.out.println(line);
@@ -1827,430 +583,213 @@ public class HttpURLConnectionDemo {
     }
 
     public static void main(String[] args) throws Exception {
-        // Test GET
         doGet("https://httpbin.org/get");
-
-        // Test POST with JSON body
-        String json = "{\"name\":\"Hari\",\"age\":22}";
-        doPost("https://httpbin.org/post", json);
+        doPost("https://httpbin.org/post", "{\\"name\\":\\"Hari\\",\\"age\\":22}");
     }
 }`]
-          }
+          },
         ]
       },
-      {
-        qnum: "Lab4-Q1&Q2&Q3",
-        qtitle: "Lab: Download Page with Correct Charset, Read Headers & Last Modified",
-        content: [
-          {
-            type: "code",
-            label: "DownloadWithCharset.java — Download page using correct charset from headers",
-            lines: [`import java.net.*;
-import java.io.*;
-
-public class DownloadWithCharset {
-    public static void main(String[] args) throws Exception {
-        URL url = new URL("https://www.example.com");
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Java)");
-        conn.connect();
-
-        // Extract charset from "Content-Type: text/html; charset=UTF-8"
-        String contentType = conn.getContentType();
-        String charset = "UTF-8"; // safe default
-        if (contentType != null) {
-            for (String part : contentType.split(";")) {
-                part = part.trim();
-                if (part.startsWith("charset=")) {
-                    charset = part.substring(8).trim().replaceAll("\"", "");
-                    break;
-                }
-            }
-        }
-        System.out.println("Detected charset: " + charset);
-
-        // Read with the detected charset — handles accented chars, etc.
-        try (BufferedReader br = new BufferedReader(
-                new InputStreamReader(conn.getInputStream(), charset))) {
-            String line;
-            while ((line = br.readLine()) != null)
-                System.out.println(line);
-        }
-        conn.disconnect();
-    }
-}
-`]
-          },
-          {
-            type: "code",
-            label: "ReadHeaders.java — Read all HTTP response headers",
-            lines: [`import java.net.*;
-import java.util.*;
-
-public class ReadHeaders {
-    public static void main(String[] args) throws Exception {
-        URL url = new URL("https://www.example.com");
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.connect();
-
-        System.out.println("Status: " + conn.getResponseCode() + " " + conn.getResponseMessage());
-        System.out.println("\\n=== All Response Headers ===");
-
-        // getHeaderFields() returns Map<String, List<String>>
-        // Key null → the status line, other keys → header names
-        Map<String, List<String>> headers = conn.getHeaderFields();
-        for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
-            System.out.println(entry.getKey() + " : " + entry.getValue());
-        }
-
-        System.out.println("\\n=== Specific Headers ===");
-        System.out.println("Content-Type  : " + conn.getContentType());
-        System.out.println("Content-Length: " + conn.getContentLength());
-        System.out.println("Server        : " + conn.getHeaderField("Server"));
-        System.out.println("Date          : " + new Date(conn.getDate()));
-
-        conn.disconnect();
-    }
-}
-`]
-          },
-          {
-            type: "code",
-            label: "LastModified.java — Get when a URL was last changed",
-            lines: [`import java.net.*;
-import java.util.Date;
-import java.text.SimpleDateFormat;
-
-public class LastModified {
-    public static void main(String[] args) throws Exception {
-        String[] testURLs = {
-            "https://www.example.com",
-            "https://httpbin.org/get"
-        };
-
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss z");
-
-        for (String urlStr : testURLs) {
-            URL url = new URL(urlStr);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("HEAD"); // HEAD = get only headers, no body (faster!)
-            conn.connect();
-
-            long lastModified = conn.getLastModified(); // 0 if not provided by server
-            System.out.println("URL           : " + urlStr);
-            System.out.println("Response Code : " + conn.getResponseCode());
-
-            if (lastModified != 0) {
-                System.out.println("Last-Modified : " + sdf.format(new Date(lastModified)));
-            } else {
-                System.out.println("Last-Modified : Not provided by server");
-            }
-
-            // Server date (when the response was generated)
-            long serverDate = conn.getDate();
-            if (serverDate != 0)
-                System.out.println("Server Date   : " + sdf.format(new Date(serverDate)));
-
-            // Expiry (from Expires header)
-            long expiry = conn.getExpiration();
-            if (expiry != 0)
-                System.out.println("Expires       : " + sdf.format(new Date(expiry)));
-
-            System.out.println();
-            conn.disconnect();
-        }
-    }
-}
-
-/*
-URL           : https://www.example.com
-Response Code : 200
-Last-Modified : 11-Aug-2024 05:44:00 UTC
-Server Date   : 01-Jan-2025 10:30:00 UTC
-*/`]
-          }
-        ]
-      }
     ]
   },
   {
     id: "u5",
-    title: "Unit 5 — TCP Sockets: Client-Server & Chat",
+    title: "Unit 5 — TCP Sockets: Client, Server & Chat",
     badge: "Assignment 6 + Lab 5",
     color: "#004D40",
     sections: [
       {
-        qnum: "A6-Q1",
-        qtitle: "ServerSocket — Lifecycle of a Server Program",
+        qnum: "Q1",
+        qtitle: "ServerSocket Lifecycle, Constructors & Options",
         content: [
-          {
-            type: "definition",
-            text: "ServerSocket: A Java class that listens on a specific port, waiting for client connections. When a client connects, ServerSocket.accept() returns a regular Socket object representing that connection. The server reads/writes data through that Socket."
-          },
-          {
-            type: "heading",
-            text: "Server Lifecycle — Step by Step"
-          },
-          {
-            type: "table",
-            headers: ["Step", "Code", "Description"],
-            rows: [
-              ["1. Bind & Listen", "new ServerSocket(port)", "Creates server socket, binds to port, starts listening. OS queues incoming connections."],
-              ["2. Accept", "Socket client = server.accept()", "BLOCKS until a client connects. Returns a Socket for that client."],
-              ["3. Get streams", "client.getInputStream() / getOutputStream()", "Get streams to read from / write to the client."],
-              ["4. Communicate", "read/write on streams", "Exchange data with the client."],
-              ["5. Close client", "client.close()", "Close this client's connection (not the server)."],
-              ["6. Repeat", "Go back to accept()", "Server loops back to accept the next client."],
-              ["7. Close server", "server.close()", "Shutdown the server."],
-            ]
-          },
-          {
-            type: "code",
-            label: "SimpleServer.java — Basic TCP echo server",
-            lines: [`import java.net.*;
-import java.io.*;
+          { type: "definition", text: "ServerSocket: Listens on a specific port, waiting for client connections. When a client connects, accept() returns a regular Socket representing that client. The server reads/writes through that Socket." },
+          { type: "diagram", text: `
+SERVERSOCKET LIFECYCLE:
 
+  new ServerSocket(port)        ← Step 1: Bind port, start listening
+         │
+         ▼
+  server.accept()               ← Step 2: BLOCKS until client connects
+         │                               Returns Socket for that client
+         ▼
+  client.getInputStream()       ← Step 3: Get streams
+  client.getOutputStream()
+         │
+         ▼
+  Read / Write on streams       ← Step 4: Communicate
+         │
+         ▼
+  client.close()                ← Step 5: Close client socket
+         │
+         └──────────────────► Go back to accept() (Step 2) for next client
+
+CONSTRUCTORS:
+  new ServerSocket()                         → Unbound. Set options, then bind().
+  new ServerSocket(port)                     → Bind to port on ALL local addresses
+  new ServerSocket(port, backlog)            → Custom connection queue size
+  new ServerSocket(port, backlog, bindAddr)  → Bind to specific local IP only
+
+KEY OPTIONS:
+  setSoTimeout(ms)    → accept() times out after ms (0 = block forever)
+  setReuseAddress(true) → allow binding to port in TIME_WAIT (prevents restart errors)
+  getLocalPort()      → which port is bound
+  isBound() / isClosed() → state checks` },
+          { type: "code", label: "SimpleServer.java + SimpleClient.java — TCP echo",
+            lines: [`// ── SERVER ────────────────────────────────────────────────────────
+import java.net.*; import java.io.*;
 public class SimpleServer {
     public static void main(String[] args) throws IOException {
         int port = 5000;
+        ServerSocket server = new ServerSocket(port, 10); // backlog=10
+        System.out.println("Listening on port " + port);
 
-        // Step 1: Bind to port and start listening
-        // backlog=10 means up to 10 connections can queue while we're busy
-        ServerSocket serverSocket = new ServerSocket(port, 10);
-        System.out.println("Server started. Listening on port " + port + "...");
-
-        // Step 6: Loop — handle multiple clients one at a time
         while (true) {
-            // Step 2: BLOCKS here until a client connects
-            // accept() returns a Socket representing the new client
-            Socket clientSocket = serverSocket.accept();
-            System.out.println("Client connected from: " +
-                               clientSocket.getInetAddress().getHostAddress());
+            Socket client = server.accept(); // BLOCKS here
+            System.out.println("Connected: " + client.getInetAddress().getHostAddress());
 
-            // Step 3: Get I/O streams
-            BufferedReader  in  = new BufferedReader(
-                new InputStreamReader(clientSocket.getInputStream()));
-            PrintWriter     out = new PrintWriter(clientSocket.getOutputStream(), true);
-            // true = auto-flush: println() flushes immediately
+            BufferedReader in  = new BufferedReader(new InputStreamReader(client.getInputStream()));
+            PrintWriter    out = new PrintWriter(client.getOutputStream(), true);
 
-            // Step 4: Communicate — echo back what client sends
-            String message;
-            while ((message = in.readLine()) != null) {
-                System.out.println("Received: " + message);
-                out.println("ECHO: " + message); // send back to client
-
-                if ("bye".equalsIgnoreCase(message.trim())) break;
+            String msg;
+            while ((msg = in.readLine()) != null) { // BLOCKS until line received
+                System.out.println("Got: " + msg);
+                out.println("ECHO: " + msg);         // send back
+                if ("bye".equalsIgnoreCase(msg.trim())) break;
             }
-
-            // Step 5: Close this client's socket
-            System.out.println("Client disconnected.");
-            clientSocket.close();
-            // Loop continues → serverSocket.accept() waits for next client
+            client.close();
         }
-        // serverSocket.close(); // would go here to shutdown server gracefully
+    }
+}`,
+`// ── CLIENT ────────────────────────────────────────────────────────
+import java.net.*; import java.io.*; import java.util.Scanner;
+public class SimpleClient {
+    public static void main(String[] args) throws IOException {
+        Socket socket = new Socket("localhost", 5000);
+        System.out.println("Connected to server.");
+
+        PrintWriter    out = new PrintWriter(socket.getOutputStream(), true);
+        BufferedReader in  = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+        Scanner sc = new Scanner(System.in);
+        while (sc.hasNextLine()) {
+            String input = sc.nextLine();
+            out.println(input);                  // send to server
+            System.out.println("Server: " + in.readLine()); // receive
+            if ("bye".equalsIgnoreCase(input.trim())) break;
+        }
+        socket.close();
     }
 }`]
           },
-          {
-            type: "code",
-            label: "SimpleClient.java — TCP client that connects to the server",
-            lines: [`import java.net.*;
-import java.io.*;
-import java.util.Scanner;
-
-public class SimpleClient {
-    public static void main(String[] args) throws IOException {
-        String serverHost = "localhost";
-        int    serverPort = 5000;
-
-        // Connect to server: opens TCP connection to serverHost:serverPort
-        Socket socket = new Socket(serverHost, serverPort);
-        System.out.println("Connected to " + serverHost + ":" + serverPort);
-
-        // Get I/O streams
-        PrintWriter  out = new PrintWriter(socket.getOutputStream(), true);
-        BufferedReader in = new BufferedReader(
-            new InputStreamReader(socket.getInputStream()));
-
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Type messages (type 'bye' to quit):");
-
-        String input;
-        while (scanner.hasNextLine()) {
-            input = scanner.nextLine();
-            out.println(input);              // send to server
-
-            String response = in.readLine(); // wait for server response
-            System.out.println("Server: " + response);
-
-            if ("bye".equalsIgnoreCase(input.trim())) break;
-        }
-
-        socket.close();
-        System.out.println("Disconnected.");
-    }
-}`]
-          }
         ]
       },
       {
-        qnum: "A6-Q2&Q3",
-        qtitle: "Multithreaded Server — Create & Read/Write Client Sockets",
+        qnum: "Q2",
+        qtitle: "Multithreaded Server — Handle Multiple Clients Simultaneously",
         content: [
-          {
-            type: "explain",
-            text: "A single-threaded server handles one client at a time — while it's talking to client A, client B must wait. A multithreaded server spawns a new thread for each accepted connection, allowing simultaneous client handling."
-          },
-          {
-            type: "code",
-            label: "MultiThreadedServer.java — Handle multiple clients simultaneously",
-            lines: [`import java.net.*;
-import java.io.*;
-import java.util.concurrent.*;
+          { type: "explain", text: "A single-threaded server handles one client at a time — client B waits while A is being served. A multithreaded server spawns a new thread (or uses a thread pool) for each accepted connection, allowing true simultaneous handling." },
+          { type: "code", label: "MultiThreadedServer.java — Thread pool server",
+            lines: [`import java.net.*; import java.io.*; import java.util.concurrent.*;
 
 public class MultiThreadedServer {
 
-    // Handler for one client — runs in its own thread
     static class ClientHandler implements Runnable {
-        private final Socket clientSocket;
-
-        ClientHandler(Socket socket) {
-            this.clientSocket = socket;
-        }
+        private final Socket socket;
+        ClientHandler(Socket s) { this.socket = s; }
 
         @Override
         public void run() {
-            String clientIP = clientSocket.getInetAddress().getHostAddress();
-            System.out.println("[" + Thread.currentThread().getName() + "] Connected: " + clientIP);
-
+            String ip = socket.getInetAddress().getHostAddress();
+            System.out.println("[" + Thread.currentThread().getName() + "] Connected: " + ip);
             try (
-                // ── Reading from client socket ───────────────────────
-                BufferedReader  in  = new BufferedReader(
-                    new InputStreamReader(clientSocket.getInputStream()));
-                // ── Writing to client socket ─────────────────────────
-                PrintWriter     out = new PrintWriter(
-                    clientSocket.getOutputStream(), true) // true = auto-flush
+                // ── Reading from client socket ──────────────────────────
+                BufferedReader in = new BufferedReader(
+                    new InputStreamReader(socket.getInputStream()));
+                // ── Writing to client socket ────────────────────────────
+                PrintWriter out = new PrintWriter(socket.getOutputStream(), true)
             ) {
-                // Send welcome message
-                out.println("Welcome! You are connected. Type 'bye' to quit.");
-
-                String message;
-                // in.readLine() BLOCKS until client sends a line (or disconnects)
-                while ((message = in.readLine()) != null) {
-                    System.out.println("[" + clientIP + "] Received: " + message);
-
-                    if ("bye".equalsIgnoreCase(message.trim())) {
-                        out.println("Goodbye!");
-                        break;
-                    }
-
-                    // Write response back to the client
-                    out.println("Server echoes: " + message.toUpperCase());
+                out.println("Welcome! Type 'bye' to quit.");
+                String msg;
+                while ((msg = in.readLine()) != null) {
+                    System.out.println("[" + ip + "] " + msg);
+                    if ("bye".equalsIgnoreCase(msg.trim())) { out.println("Goodbye!"); break; }
+                    out.println("Echo: " + msg.toUpperCase());
                 }
-
             } catch (IOException e) {
-                System.out.println("Client " + clientIP + " error: " + e.getMessage());
+                System.out.println(ip + " error: " + e.getMessage());
             } finally {
-                try { clientSocket.close(); } catch (IOException e) {}
-                System.out.println("[" + clientIP + "] Disconnected.");
+                try { socket.close(); } catch (IOException e) {}
+                System.out.println("[" + ip + "] Disconnected.");
             }
         }
     }
 
     public static void main(String[] args) throws IOException {
-        int port = 5000;
-        ServerSocket server = new ServerSocket(port);
-        System.out.println("Multithreaded server on port " + port);
+        ServerSocket server = new ServerSocket(5000);
+        System.out.println("Multithreaded server started.");
 
-        // Thread pool — reuse up to 10 threads instead of creating new ones endlessly
-        // Prevents memory exhaustion when thousands of clients connect
+        // Thread pool — reuse up to 10 threads (prevents memory exhaustion)
         ExecutorService pool = Executors.newFixedThreadPool(10);
 
         while (true) {
-            Socket client = server.accept(); // blocks until next client
-            // Submit to thread pool — runs ClientHandler.run() in a pool thread
-            pool.submit(new ClientHandler(client));
-            // Main thread immediately loops back to accept() for next client
+            Socket client = server.accept();       // blocks for next client
+            pool.submit(new ClientHandler(client)); // assign to thread pool
+            // Main thread immediately goes back to accept() for next client!
         }
     }
 }`]
-          }
+          },
         ]
       },
       {
-        qnum: "Lab5-Q2",
-        qtitle: "Lab: GUI Chat Application using Swing",
+        qnum: "Q3",
+        qtitle: "Lab: GUI Chat Application (Swing + TCP Sockets)",
         content: [
-          {
-            type: "code",
-            label: "ChatServer.java — Multithreaded chat server broadcasting to all clients",
-            lines: [`import java.net.*;
-import java.io.*;
-import java.util.*;
-import java.util.concurrent.*;
+          { type: "code", label: "ChatServer.java — Broadcast to all clients",
+            lines: [`import java.net.*; import java.io.*; import java.util.*; import java.util.concurrent.*;
 
 public class ChatServer {
-    // Thread-safe list of all connected clients
     static List<PrintWriter> clients = new CopyOnWriteArrayList<>();
 
-    // Broadcast a message to ALL connected clients
-    static void broadcast(String message) {
-        System.out.println("[BROADCAST] " + message);
-        for (PrintWriter writer : clients) {
-            writer.println(message);
-        }
+    static void broadcast(String msg) {
+        System.out.println("[BROADCAST] " + msg);
+        for (PrintWriter pw : clients) pw.println(msg);
     }
 
     static class ClientHandler implements Runnable {
-        private Socket socket;
-        private PrintWriter out;
-        private String username;
-
-        ClientHandler(Socket socket) { this.socket = socket; }
-
+        private Socket socket; private PrintWriter out; private String username;
+        ClientHandler(Socket s) { this.socket = s; }
         public void run() {
             try {
-                BufferedReader in  = new BufferedReader(
-                    new InputStreamReader(socket.getInputStream()));
+                BufferedReader in  = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out = new PrintWriter(socket.getOutputStream(), true);
-
-                // First message from client is the username
-                username = in.readLine();
-                clients.add(out); // register this client
-                broadcast("*** " + username + " joined the chat ***");
-
+                username = in.readLine();     // first message = username
+                clients.add(out);
+                broadcast("*** " + username + " joined ***");
                 String msg;
                 while ((msg = in.readLine()) != null) {
                     if ("/quit".equals(msg)) break;
                     broadcast(username + ": " + msg);
                 }
-
-            } catch (IOException e) {
-                System.out.println(username + " disconnected: " + e.getMessage());
-            } finally {
+            } catch (IOException e) { System.out.println(username + " error: " + e.getMessage()); }
+            finally {
                 if (out != null) clients.remove(out);
-                broadcast("*** " + username + " left the chat ***");
+                broadcast("*** " + username + " left ***");
                 try { socket.close(); } catch (IOException e) {}
             }
         }
     }
-
     public static void main(String[] args) throws IOException {
         ServerSocket server = new ServerSocket(6000);
-        System.out.println("Chat server started on port 6000");
+        System.out.println("Chat server on port 6000");
         ExecutorService pool = Executors.newCachedThreadPool();
         while (true) pool.submit(new ClientHandler(server.accept()));
     }
 }`]
           },
-          {
-            type: "code",
-            label: "ChatClient.java — Swing GUI chat client",
-            lines: [`import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.net.*;
-import java.io.*;
+          { type: "code", label: "ChatClient.java — Swing GUI chat client",
+            lines: [`import javax.swing.*; import java.awt.*; import java.awt.event.*;
+import java.net.*; import java.io.*;
 
 public class ChatClient extends JFrame {
     private JTextArea  chatArea   = new JTextArea(20, 45);
@@ -2261,139 +800,54 @@ public class ChatClient extends JFrame {
     ChatClient(String host, int port, String username) {
         setTitle("Chat — " + username);
         setLayout(new BorderLayout(5, 5));
-
         chatArea.setEditable(false);
         chatArea.setFont(new Font("Monospaced", Font.PLAIN, 13));
-        chatArea.setBackground(new Color(30, 30, 30));
-        chatArea.setForeground(new Color(200, 220, 200));
-        JScrollPane scroll = new JScrollPane(chatArea);
-
+        chatArea.setBackground(new Color(30,30,30));
+        chatArea.setForeground(new Color(200,220,200));
         JPanel bottom = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        bottom.add(inputField);
-        bottom.add(sendBtn);
+        bottom.add(inputField); bottom.add(sendBtn);
+        add(new JScrollPane(chatArea), BorderLayout.CENTER);
+        add(bottom, BorderLayout.SOUTH);
 
-        add(scroll, BorderLayout.CENTER);
-        add(bottom,  BorderLayout.SOUTH);
-
-        // Send message action
-        ActionListener sendAction = e -> {
+        ActionListener send = e -> {
             String msg = inputField.getText().trim();
-            if (!msg.isEmpty() && out != null) {
-                out.println(msg);
-                inputField.setText("");
-            }
+            if (!msg.isEmpty() && out != null) { out.println(msg); inputField.setText(""); }
         };
-        sendBtn.addActionListener(sendAction);
-        inputField.addActionListener(sendAction); // Enter key also sends
+        sendBtn.addActionListener(send);
+        inputField.addActionListener(send); // Enter key also sends
 
-        pack();
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setVisible(true);
+        pack(); setDefaultCloseOperation(EXIT_ON_CLOSE); setVisible(true);
 
-        // Connect to server in a background thread
+        // Connect in background thread
         new Thread(() -> {
             try {
                 Socket socket = new Socket(host, port);
                 out = new PrintWriter(socket.getOutputStream(), true);
-                out.println(username); // send username first
-
-                // Read incoming messages on background thread
-                BufferedReader in = new BufferedReader(
-                    new InputStreamReader(socket.getInputStream()));
+                out.println(username); // register username
+                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 String line;
                 while ((line = in.readLine()) != null) {
                     final String msg = line;
-                    // UI updates must happen on Event Dispatch Thread!
+                    // UI updates MUST be on Event Dispatch Thread!
                     SwingUtilities.invokeLater(() -> {
                         chatArea.append(msg + "\\n");
                         chatArea.setCaretPosition(chatArea.getDocument().getLength());
                     });
                 }
             } catch (IOException ex) {
-                SwingUtilities.invokeLater(() ->
-                    chatArea.append("Disconnected: " + ex.getMessage() + "\\n"));
+                SwingUtilities.invokeLater(() -> chatArea.append("Disconnected: " + ex.getMessage()));
             }
         }).start();
     }
 
     public static void main(String[] args) {
-        String name = JOptionPane.showInputDialog(null, "Enter your username:");
-        if (name != null && !name.trim().isEmpty())
-            new ChatClient("localhost", 6000, name.trim());
+        String name = JOptionPane.showInputDialog("Enter username:");
+        if (name != null && !name.trim().isEmpty()) new ChatClient("localhost", 6000, name.trim());
     }
 }`]
-          }
+          },
         ]
       },
-      {
-        qnum: "A6-Q4&Q5",
-        qtitle: "ServerSocket Constructors & Options",
-        content: [
-          {
-            type: "heading",
-            text: "ServerSocket Constructors"
-          },
-          {
-            type: "table",
-            headers: ["Constructor", "Description"],
-            rows: [
-              ["new ServerSocket()", "Creates unbound socket. Must call bind() later. Useful to set options before binding."],
-              ["new ServerSocket(port)", "Bind to port on all local addresses. Backlog = 50 (default)."],
-              ["new ServerSocket(port, backlog)", "Bind to port with custom backlog queue size."],
-              ["new ServerSocket(port, backlog, bindAddr)", "Bind to a specific local IP. Useful on multi-homed servers."],
-            ]
-          },
-          {
-            type: "heading",
-            text: "Server Socket Options"
-          },
-          {
-            type: "table",
-            headers: ["Option", "Method", "Description"],
-            rows: [
-              ["SO_TIMEOUT", "setSoTimeout(ms)", "How long accept() blocks before throwing SocketTimeoutException. 0 = block forever."],
-              ["SO_REUSEADDR", "setReuseAddress(true)", "Allow binding to a port that's still in TIME_WAIT. Prevents 'Address already in use' on restart."],
-              ["Receive Buffer", "setReceiveBufferSize(n)", "Hint for TCP receive buffer size for all accepted connections."],
-              ["Backlog", "new ServerSocket(port, backlog)", "Max number of connections that can queue while server is busy in accept()."],
-            ]
-          },
-          {
-            type: "code",
-            label: "ServerSocketOptions.java — Constructors and options demo",
-            lines: [`import java.net.*;
-import java.io.*;
-
-public class ServerSocketOptions {
-    public static void main(String[] args) throws Exception {
-        // Unbound — set options before binding
-        ServerSocket ss = new ServerSocket();
-        ss.setReuseAddress(true);        // don't fail if port in TIME_WAIT
-        ss.setSoTimeout(30000);          // accept() times out after 30 seconds
-        ss.setReceiveBufferSize(65536);  // 64KB receive buffer hint
-
-        // Bind manually — port 5001, backlog 20, on all interfaces
-        ss.bind(new InetSocketAddress(5001, 20));
-
-        System.out.println("Listening on: " + ss.getLocalSocketAddress());
-        System.out.println("SO_TIMEOUT   : " + ss.getSoTimeout() + " ms");
-        System.out.println("SO_REUSEADDR : " + ss.getReuseAddress());
-        System.out.println("Recv Buffer  : " + ss.getReceiveBufferSize());
-        System.out.println("isClosed()   : " + ss.isClosed());
-        System.out.println("isBound()    : " + ss.isBound());
-        System.out.println("Local Port   : " + ss.getLocalPort());
-
-        // Bind on specific interface only (e.g., only accept local connections)
-        ServerSocket local = new ServerSocket(5002, 50,
-            InetAddress.getByName("127.0.0.1")); // only loopback connections
-        System.out.println("\\nLocal-only server on: " + local.getLocalSocketAddress());
-
-        ss.close();
-        local.close();
-    }
-}`]
-          }
-        ]
-      }
     ]
   },
   {
@@ -2403,531 +857,258 @@ public class ServerSocketOptions {
     color: "#E65100",
     sections: [
       {
-        qnum: "A9-Q1&Q2&Q3",
-        qtitle: "UDP — DatagramSocket & DatagramPacket",
+        qnum: "Q1",
+        qtitle: "UDP — DatagramSocket, DatagramPacket & TCP vs UDP",
         content: [
-          {
-            type: "definition",
-            text: "UDP (User Datagram Protocol): A connectionless transport protocol. Unlike TCP, there is no handshake, no guaranteed delivery, and no order preservation. Packets (datagrams) are sent independently. Faster and lower overhead than TCP, but unreliable."
-          },
-          {
-            type: "table",
-            headers: ["Feature", "TCP", "UDP"],
-            rows: [
-              ["Connection", "Connection-oriented (3-way handshake)", "Connectionless — no setup needed"],
-              ["Reliability", "Guaranteed delivery, retransmission", "No guarantees — packets may drop"],
-              ["Order", "In-order delivery", "Packets may arrive out of order"],
-              ["Speed", "Slower due to overhead", "Faster — minimal overhead"],
-              ["Use case", "File transfer, HTTP, email", "Video streaming, gaming, DNS, VoIP"],
-              ["Java class", "Socket / ServerSocket", "DatagramSocket / DatagramPacket"],
-            ]
-          },
-          {
-            type: "heading",
-            text: "UDP Lifecycle"
-          },
-          {
-            type: "table",
-            headers: ["Server Side", "Client Side"],
-            rows: [
-              ["new DatagramSocket(port) — bind to port", "new DatagramSocket() — random port"],
-              ["Create empty packet for receiving", "Create packet with data + destination address+port"],
-              ["socket.receive(packet) — BLOCKS", "socket.send(packet) — fire and forget"],
-              ["Read data from packet", "Optionally receive(packet) for response"],
-              ["Loop back to receive()", "Close socket"],
-            ]
-          },
-          {
-            type: "code",
-            label: "UDPServer.java — UDP Daytime server",
-            lines: [`import java.net.*;
-import java.io.*;
-import java.util.Date;
+          { type: "definition", text: "UDP (User Datagram Protocol): A connectionless transport protocol. No handshake, no guaranteed delivery, no order preservation. Packets (datagrams) are sent independently — faster and lighter than TCP but unreliable." },
+          { type: "diagram", text: `
+TCP vs UDP COMPARISON:
 
+┌────────────────────────────┬────────────────────────────┐
+│           TCP              │           UDP              │
+├────────────────────────────┼────────────────────────────┤
+│ Connection-oriented        │ Connectionless             │
+│ 3-way handshake            │ No setup needed            │
+│ Guaranteed delivery        │ No guarantee — may drop    │
+│ In-order delivery          │ May arrive out of order    │
+│ Flow & congestion control  │ No flow control            │
+│ Slower (overhead)          │ Faster (minimal overhead)  │
+│ HTTP, FTP, SMTP, SSH       │ DNS, VoIP, Gaming, Video   │
+│ Socket / ServerSocket      │ DatagramSocket / Packet    │
+└────────────────────────────┴────────────────────────────┘
+
+UDP LIFECYCLE:
+  SERVER                          CLIENT
+  DatagramSocket(port)            DatagramSocket() [random port]
+  receive(packet) ← BLOCKS        send(packet → server addr:port)
+  Read data from packet           Optionally receive(packet) reply
+  Send reply back                 Close socket` },
+          { type: "code", label: "UDPServer.java + UDPClient.java",
+            lines: [`// ── UDP SERVER ───────────────────────────────────────────────────
+import java.net.*;
 public class UDPServer {
     public static void main(String[] args) throws Exception {
-        int port = 7000;
-        // DatagramSocket bound to port — ready to receive UDP packets
-        DatagramSocket socket = new DatagramSocket(port);
-        System.out.println("UDP Server listening on port " + port);
-
-        byte[] buffer = new byte[256]; // buffer to hold incoming data
-
-        while (true) {
-            // DatagramPacket to receive into — wraps the byte buffer
-            DatagramPacket receivePacket = new DatagramPacket(buffer, buffer.length);
-
-            // BLOCKS until a UDP packet arrives
-            socket.receive(receivePacket);
-
-            // Extract sender's address and port (needed to reply)
-            InetAddress clientAddr = receivePacket.getAddress();
-            int         clientPort = receivePacket.getPort();
-
-            // Extract the message data
-            String received = new String(receivePacket.getData(), 0, receivePacket.getLength());
-            System.out.println("Received from " + clientAddr + ":" + clientPort + " → " + received);
-
-            // Prepare reply
-            String reply = "Server time: " + new Date().toString();
-            byte[] replyData = reply.getBytes("UTF-8");
-
-            // DatagramPacket with data + destination address + port
-            DatagramPacket sendPacket = new DatagramPacket(
-                replyData, replyData.length, clientAddr, clientPort);
-
-            socket.send(sendPacket); // send — no connection, just fire packet
-            System.out.println("Replied to " + clientAddr + ":" + clientPort);
-        }
-    }
-}
-`]
-          },
-          {
-            type: "code",
-            label: "UDPClient.java — Send and receive UDP datagram",
-            lines: [`import java.net.*;
-
-public class UDPClient {
-    public static void main(String[] args) throws Exception {
-        String serverHost = "localhost";
-        int    serverPort = 7000;
-
-        DatagramSocket socket = new DatagramSocket(); // no port = OS assigns random port
-        socket.setSoTimeout(5000); // timeout if no reply in 5 sec
-
-        // Prepare request
-        String  message     = "Hello, UDP Server!";
-        byte[]  data        = message.getBytes("UTF-8");
-        InetAddress address = InetAddress.getByName(serverHost);
-
-        // Send packet: data + server address + server port
-        DatagramPacket sendPacket = new DatagramPacket(data, data.length, address, serverPort);
-        socket.send(sendPacket);
-        System.out.println("Sent: " + message);
-
-        // Receive reply
-        byte[] replyBuffer = new byte[512];
-        DatagramPacket replyPacket = new DatagramPacket(replyBuffer, replyBuffer.length);
-
-        try {
-            socket.receive(replyPacket); // blocks until reply arrives or timeout
-            String reply = new String(replyPacket.getData(), 0, replyPacket.getLength());
-            System.out.println("Reply from server: " + reply);
-        } catch (java.net.SocketTimeoutException e) {
-            System.out.println("No reply received within timeout.");
-        }
-
-        socket.close();
-    }
-}`]
-          }
-        ]
-      },
-      {
-        qnum: "Lab5-Q3",
-        qtitle: "Lab: Datagram Socket Console Chat",
-        content: [
-          {
-            type: "code",
-            label: "DatagramChatServer.java + DatagramChatClient.java — UDP console chat",
-            lines: [`// ── DatagramChatServer.java ──────────────────────────────────────────
-import java.net.*;
-
-public class DatagramChatServer {
-    static final int PORT = 7500;
-
-    public static void main(String[] args) throws Exception {
-        DatagramSocket socket = new DatagramSocket(PORT);
-        byte[] buf = new byte[512];
-        System.out.println("UDP Chat Server ready on port " + PORT);
-        System.out.println("Waiting for messages...");
-
+        DatagramSocket socket = new DatagramSocket(7000);
+        System.out.println("UDP Server on port 7000");
+        byte[] buf = new byte[256];
         while (true) {
             DatagramPacket recv = new DatagramPacket(buf, buf.length);
-            socket.receive(recv);
-
-            String msg = new String(recv.getData(), 0, recv.getLength(), "UTF-8");
-            System.out.println("Client: " + msg);
-
-            // Read server response from console and send back
-            System.out.print("Server> ");
-            String reply = new java.util.Scanner(System.in).nextLine();
-            byte[] replyBytes = reply.getBytes("UTF-8");
-            socket.send(new DatagramPacket(replyBytes, replyBytes.length,
-                recv.getAddress(), recv.getPort()));
+            socket.receive(recv); // BLOCKS until datagram arrives
+            String msg  = new String(recv.getData(), 0, recv.getLength());
+            System.out.println("Received: " + msg + " from " + recv.getAddress());
+            String reply = "Echo: " + msg;
+            byte[] data  = reply.getBytes("UTF-8");
+            socket.send(new DatagramPacket(data, data.length, recv.getAddress(), recv.getPort()));
         }
     }
 }`,
-`// ── DatagramChatClient.java ──────────────────────────────────────────
+`// ── UDP CLIENT ───────────────────────────────────────────────────
 import java.net.*;
-import java.util.Scanner;
-
-public class DatagramChatClient {
-    static final int SERVER_PORT = 7500;
-
+public class UDPClient {
     public static void main(String[] args) throws Exception {
-        DatagramSocket socket = new DatagramSocket();
-        socket.setSoTimeout(10000);
-        InetAddress serverAddr = InetAddress.getByName("localhost");
-
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("UDP Chat Client. Type messages (Ctrl+C to quit):");
-
-        while (true) {
-            System.out.print("You> ");
-            String msg = scanner.nextLine();
-            byte[] data = msg.getBytes("UTF-8");
-            socket.send(new DatagramPacket(data, data.length, serverAddr, SERVER_PORT));
-
-            // Wait for reply
-            byte[] buf = new byte[512];
-            DatagramPacket reply = new DatagramPacket(buf, buf.length);
-            try {
-                socket.receive(reply);
-                System.out.println("Server: " + new String(reply.getData(), 0, reply.getLength(), "UTF-8"));
-            } catch (java.net.SocketTimeoutException e) {
-                System.out.println("(No reply from server)");
-            }
+        DatagramSocket socket = new DatagramSocket(); // random port
+        socket.setSoTimeout(5000); // 5-sec timeout for reply
+        InetAddress addr = InetAddress.getByName("localhost");
+        byte[] data = "Hello, UDP Server!".getBytes("UTF-8");
+        socket.send(new DatagramPacket(data, data.length, addr, 7000));
+        System.out.println("Sent datagram.");
+        byte[] buf = new byte[512];
+        DatagramPacket reply = new DatagramPacket(buf, buf.length);
+        try {
+            socket.receive(reply);
+            System.out.println("Reply: " + new String(reply.getData(), 0, reply.getLength()));
+        } catch (java.net.SocketTimeoutException e) {
+            System.out.println("No reply in 5 seconds.");
         }
+        socket.close();
     }
 }`]
-          }
+          },
         ]
       },
       {
-        qnum: "A8-Q1&Q2",
-        qtitle: "NIO — Non-Blocking I/O, ByteBuffer & Channel",
+        qnum: "Q2",
+        qtitle: "NIO — ByteBuffer, Channels & Selector (Non-Blocking I/O)",
         content: [
-          {
-            type: "definition",
-            text: "NIO (New I/O): Introduced in Java 1.4, it provides an alternative I/O approach using Channels (bidirectional data pipes), Buffers (containers of data), and Selectors (monitoring multiple channels with one thread). Key advantage: non-blocking mode — a single thread can serve thousands of connections."
-          },
-          {
-            type: "table",
-            headers: ["Concept", "Traditional I/O", "NIO"],
+          { type: "definition", text: "NIO (New I/O): Introduced in Java 1.4. Provides Channels (bidirectional data pipes), Buffers (containers of byte data), and Selectors (one thread monitoring many channels). Key advantage: a SINGLE thread can serve thousands of non-blocking connections." },
+          { type: "table", headers: ["Concept", "Traditional I/O", "NIO"],
             rows: [
               ["Abstraction", "Streams (InputStream/OutputStream)", "Channels (SocketChannel, FileChannel)"],
               ["Data unit", "Bytes/chars sequentially", "ByteBuffer (block of bytes)"],
               ["Blocking", "Blocking (thread waits)", "Can be non-blocking (thread continues)"],
-              ["Multiplexing", "One thread per connection", "One thread handles many connections via Selector"],
-              ["Scalability", "10k clients = 10k threads = memory exhaustion", "10k clients = 1 thread with Selector"],
+              ["Multiplexing", "One thread per connection", "ONE thread handles many via Selector"],
+              ["Scalability", "10k clients = 10k threads", "10k clients = 1-2 threads with Selector"],
             ]
           },
-          {
-            type: "heading",
-            text: "ByteBuffer — Key Methods & States"
-          },
-          {
-            type: "table",
-            headers: ["Method", "Description"],
-            rows: [
-              ["ByteBuffer.allocate(n)", "Create a buffer with n bytes capacity on heap"],
-              ["ByteBuffer.allocateDirect(n)", "Create a buffer outside heap — faster for I/O"],
-              ["put(bytes)", "Write data INTO buffer. Advances position."],
-              ["flip()", "Switch from writing to reading mode: limit=position, position=0"],
-              ["get()", "Read data FROM buffer. Advances position."],
-              ["clear()", "Reset for fresh writing: position=0, limit=capacity"],
-              ["compact()", "Keep unread bytes, move to front, ready for more writing"],
-              ["remaining()", "How many bytes can still be read: limit - position"],
-            ]
-          },
-          {
-            type: "code",
-            label: "NIOServer.java — Non-blocking server with Selector",
-            lines: [`import java.nio.*;
-import java.nio.channels.*;
-import java.net.*;
-import java.util.*;
+          { type: "diagram", text: `
+BYTEBUFFER STATE MACHINE:
+
+  [New Buffer]  →  allocate(n)  →  [WRITE MODE: position=0, limit=capacity]
+                                          │
+                                       put(data)  → writes data, position advances
+                                          │
+                                       flip()     → SWITCH to READ MODE
+                                          │         limit=position, position=0
+                                          ▼
+                               [READ MODE: position=0, limit=data_end]
+                                          │
+                                       get()      → reads data, position advances
+                                          │
+                               remaining() = limit - position  ← unread bytes
+                                          │
+                               clear()    → back to WRITE MODE (position=0, limit=cap)
+                               compact()  → move unread bytes to front, then write mode
+
+SELECTIONKEY OPERATIONS:
+  OP_ACCEPT  = 16  → ServerSocketChannel ready to accept new connection
+  OP_READ    =  1  → SocketChannel has data to read
+  OP_WRITE   =  4  → SocketChannel can accept write data
+  OP_CONNECT =  8  → Client SocketChannel finished connecting` },
+          { type: "code", label: "NIOServer.java — Non-blocking server with Selector",
+            lines: [`import java.nio.*; import java.nio.channels.*; import java.net.*; import java.util.*;
 
 public class NIOServer {
     public static void main(String[] args) throws Exception {
-        int port = 9000;
+        ServerSocketChannel serverCh = ServerSocketChannel.open();
+        serverCh.socket().bind(new InetSocketAddress(9000));
+        serverCh.configureBlocking(false); // ← non-blocking mode
 
-        // Open a server channel (non-blocking equivalent of ServerSocket)
-        ServerSocketChannel serverChannel = ServerSocketChannel.open();
-        serverChannel.socket().bind(new InetSocketAddress(port));
-
-        // Set NON-BLOCKING mode — accept() no longer blocks
-        serverChannel.configureBlocking(false);
-
-        // Create Selector — monitors multiple channels with ONE thread
         Selector selector = Selector.open();
-
-        // Register serverChannel with selector for ACCEPT events
-        serverChannel.register(selector, SelectionKey.OP_ACCEPT);
-
-        System.out.println("NIO Non-blocking Server on port " + port);
+        serverCh.register(selector, SelectionKey.OP_ACCEPT); // watch for connections
+        System.out.println("NIO Non-blocking Server on port 9000");
 
         while (true) {
-            // BLOCKS until at least one channel is ready
-            int readyCount = selector.select();
-            if (readyCount == 0) continue;
+            selector.select(); // BLOCKS until at least one channel is ready
 
-            Set<SelectionKey> selectedKeys = selector.selectedKeys();
-            Iterator<SelectionKey> iter = selectedKeys.iterator();
+            Set<SelectionKey> keys = selector.selectedKeys();
+            Iterator<SelectionKey> iter = keys.iterator();
 
             while (iter.hasNext()) {
                 SelectionKey key = iter.next();
-                iter.remove(); // IMPORTANT: remove processed key
+                iter.remove(); // MUST remove processed key
 
                 if (key.isAcceptable()) {
-                    // A new client is connecting
-                    ServerSocketChannel ssc = (ServerSocketChannel) key.channel();
-                    SocketChannel client = ssc.accept(); // non-blocking — won't block
+                    // New client connecting
+                    SocketChannel client = ((ServerSocketChannel) key.channel()).accept();
                     client.configureBlocking(false);
-                    // Register new client for READ events
-                    client.register(selector, SelectionKey.OP_READ);
+                    client.register(selector, SelectionKey.OP_READ); // watch for data
                     System.out.println("Client connected: " + client.getRemoteAddress());
 
                 } else if (key.isReadable()) {
-                    // A client sent data
+                    // Client sent data
                     SocketChannel client = (SocketChannel) key.channel();
-                    ByteBuffer buffer = ByteBuffer.allocate(256);
-
-                    int bytesRead = client.read(buffer); // non-blocking read
-                    if (bytesRead == -1) {
-                        // Client disconnected
-                        System.out.println("Client disconnected.");
-                        client.close();
-                        key.cancel();
-                    } else if (bytesRead > 0) {
-                        buffer.flip(); // switch from writing to reading mode
-                        byte[] data = new byte[buffer.remaining()];
-                        buffer.get(data);
-                        String msg = new String(data).trim();
-                        System.out.println("Received: " + msg);
-
+                    ByteBuffer buf = ByteBuffer.allocate(256);
+                    int n = client.read(buf);
+                    if (n == -1) {
+                        client.close(); key.cancel(); // client disconnected
+                    } else {
+                        buf.flip();                    // switch to read mode
+                        byte[] data = new byte[buf.remaining()];
+                        buf.get(data);
+                        System.out.println("Received: " + new String(data).trim());
                         // Echo back
-                        ByteBuffer response = ByteBuffer.wrap(("ECHO: " + msg + "\\n").getBytes());
-                        client.write(response);
+                        ByteBuffer reply = ByteBuffer.wrap(("ECHO: " + new String(data)).getBytes());
+                        client.write(reply);
                     }
                 }
             }
         }
     }
-}
-`]
-          }
+}`]
+          },
         ]
       },
       {
-        qnum: "A8-Q3",
-        qtitle: "Readiness Selection — Selector & SelectionKey Classes",
+        qnum: "Q3",
+        qtitle: "IP Multicasting & Secure Sockets (SSL/TLS)",
         content: [
-          {
-            type: "definition",
-            text: "Readiness Selection: The ability to ask 'which of these channels are ready for I/O right now?' without blocking on any single one. The Selector checks all registered channels and returns only the ones that have pending data or can be written to."
-          },
-          {
-            type: "table",
-            headers: ["SelectionKey Constant", "Value", "Meaning"],
-            rows: [
-              ["SelectionKey.OP_ACCEPT", "16", "ServerSocketChannel ready to accept a new connection"],
-              ["SelectionKey.OP_CONNECT", "8", "SocketChannel finished connecting (for clients)"],
-              ["SelectionKey.OP_READ", "1", "SocketChannel has data available to read"],
-              ["SelectionKey.OP_WRITE", "4", "SocketChannel can accept data to be written"],
-            ]
-          },
-          {
-            type: "table",
-            headers: ["Selector Method", "Description"],
-            rows: [
-              ["Selector.open()", "Create a new selector"],
-              ["channel.register(selector, ops)", "Register channel with selector for specified ops"],
-              ["selector.select()", "Block until at least one channel is ready. Returns count."],
-              ["selector.select(timeout)", "Block up to timeout ms"],
-              ["selector.selectNow()", "Non-blocking — returns immediately with current ready count"],
-              ["selector.selectedKeys()", "Set of keys for channels that are ready"],
-              ["selector.keys()", "All registered keys (ready or not)"],
-            ]
-          }
-        ]
-      },
-      {
-        qnum: "A10-Q1&Q2",
-        qtitle: "IP Multicasting — MulticastSocket",
-        content: [
-          {
-            type: "definition",
-            text: "IP Multicasting: A one-to-many network communication. A sender sends ONE packet to a multicast group address (224.0.0.0 – 239.255.255.255). All machines that have JOINED that group receive the packet. More efficient than sending individual copies to each receiver."
-          },
-          {
-            type: "table",
-            headers: ["Concept", "Description"],
-            rows: [
-              ["Multicast Address", "A special IP in 224.0.0.0–239.255.255.255. Not a machine — it's a 'channel'"],
-              ["Multicast Group", "All sockets that have joined a particular multicast address"],
-              ["Join Group", "socket.joinGroup(address) — subscribe to receive packets for this group"],
-              ["Leave Group", "socket.leaveGroup(address) — stop receiving packets"],
-              ["TTL", "Time-To-Live: how many routers the packet passes through. 1 = local subnet only"],
-            ]
-          },
-          {
-            type: "code",
-            label: "MulticastSender.java + MulticastReceiver.java — Group communication",
-            lines: [`// ── MulticastSender.java ─────────────────────────────────────────────
+          { type: "definition", text: "IP Multicasting: One-to-many communication. A sender sends ONE packet to a multicast group address (224.0.0.0–239.255.255.255). All machines that have JOINED that group receive the packet — more efficient than individual copies." },
+          { type: "code", label: "MulticastSender.java + MulticastReceiver.java",
+            lines: [`// ── SENDER ──────────────────────────────────────────────────────
 import java.net.*;
-
 public class MulticastSender {
     public static void main(String[] args) throws Exception {
         InetAddress group = InetAddress.getByName("230.0.0.1"); // multicast group address
-        int port = 4446;
-
         MulticastSocket socket = new MulticastSocket();
-        socket.setTimeToLive(1); // TTL=1: stay on local subnet (don't cross routers)
-
-        String[] messages = {"Hello Group!", "Message 2", "Message 3", "END"};
-
-        for (String msg : messages) {
+        socket.setTimeToLive(1); // TTL=1 → stay on local subnet only
+        for (String msg : new String[]{"Hello Group!", "Message 2", "END"}) {
             byte[] data = msg.getBytes("UTF-8");
-            // Send to the multicast group address — ALL members receive it
-            DatagramPacket packet = new DatagramPacket(data, data.length, group, port);
-            socket.send(packet);
-            System.out.println("Sent to group: " + msg);
-            Thread.sleep(1000); // 1 second between messages
+            socket.send(new DatagramPacket(data, data.length, group, 4446));
+            System.out.println("Sent: " + msg);
+            Thread.sleep(1000);
         }
-
         socket.close();
     }
 }`,
-`// ── MulticastReceiver.java ───────────────────────────────────────────
+`// ── RECEIVER ────────────────────────────────────────────────────
 import java.net.*;
-
 public class MulticastReceiver {
     public static void main(String[] args) throws Exception {
         InetAddress group = InetAddress.getByName("230.0.0.1");
-        int port = 4446;
-
-        // MulticastSocket bound to the port
-        MulticastSocket socket = new MulticastSocket(port);
-
-        // JOIN the multicast group — now we receive packets sent to 230.0.0.1:4446
-        socket.joinGroup(group);
-        System.out.println("Joined multicast group: " + group.getHostAddress());
-        System.out.println("Waiting for messages...");
-
+        MulticastSocket socket = new MulticastSocket(4446);
+        socket.joinGroup(group); // ← subscribe to this multicast group
+        System.out.println("Joined multicast group. Waiting...");
         byte[] buf = new byte[256];
         while (true) {
-            DatagramPacket packet = new DatagramPacket(buf, buf.length);
-            socket.receive(packet); // blocks until a packet arrives
-
-            String msg = new String(packet.getData(), 0, packet.getLength(), "UTF-8");
-            System.out.println("Received: " + msg + " [from " + packet.getAddress() + "]");
-
-            if ("END".equals(msg)) {
-                System.out.println("Received END signal. Leaving group.");
-                break;
-            }
+            DatagramPacket pkt = new DatagramPacket(buf, buf.length);
+            socket.receive(pkt);
+            String msg = new String(pkt.getData(), 0, pkt.getLength());
+            System.out.println("Received: " + msg);
+            if ("END".equals(msg)) break;
         }
-
-        socket.leaveGroup(group); // unsubscribe from the group
+        socket.leaveGroup(group); // ← unsubscribe
         socket.close();
     }
 }`]
-          }
-        ]
-      },
-      {
-        qnum: "A7-Q1&Q2&Q3",
-        qtitle: "Secure Sockets — SSL/TLS Client & Server",
-        content: [
-          {
-            type: "definition",
-            text: "Secure Socket (SSL/TLS): An encrypted socket connection. SSL (Secure Sockets Layer) and TLS (Transport Layer Security — its successor) add encryption, authentication, and integrity on top of regular TCP sockets. Used by HTTPS, SMTPS, etc."
           },
-          {
-            type: "table",
-            headers: ["Aspect", "Regular Socket", "SSL Socket"],
+          { type: "heading", text: "Secure Sockets (SSL/TLS)" },
+          { type: "table", headers: ["Aspect", "Regular Socket", "SSL Socket"],
             rows: [
-              ["Data", "Plain text — anyone can read if intercepted", "Encrypted — unreadable without the key"],
-              ["Authentication", "None — you don't know who you're talking to", "Certificate-based — verify server identity"],
-              ["Integrity", "Data can be tampered", "MAC ensures data hasn't been altered"],
+              ["Data", "Plain text — readable if intercepted", "Encrypted — unreadable without key"],
+              ["Authentication", "None — unknown who you're talking to", "Certificate-based identity verification"],
               ["Java class", "Socket / ServerSocket", "SSLSocket / SSLServerSocket"],
               ["Factory", "new Socket()", "SSLSocketFactory.getDefault().createSocket()"],
-              ["Port", "Any port", "HTTPS = 443, SMTPS = 465"],
+              ["Port", "Any", "HTTPS=443, SMTPS=465"],
             ]
           },
-          {
-            type: "code",
-            label: "SSLClient.java + SSLServer.java — Secure socket communication",
-            lines: [`// ── SSLClient.java ────────────────────────────────────────────────────
-import javax.net.ssl.*;
-import java.io.*;
-
+          { type: "code", label: "SSLClient.java + SSLServer.java",
+            lines: [`// ── SSL CLIENT ──────────────────────────────────────────────────
+import javax.net.ssl.*; import java.io.*;
 public class SSLClient {
     public static void main(String[] args) throws Exception {
-        String host = "localhost";
-        int    port = 8443;
-
-        // Get the SSLSocketFactory — creates SSL-wrapped sockets
         SSLSocketFactory factory = (SSLSocketFactory) SSLSocketFactory.getDefault();
-
-        // Create SSL socket — performs TLS handshake automatically on connect
-        try (SSLSocket socket = (SSLSocket) factory.createSocket(host, port)) {
-
-            // Optionally restrict to specific TLS versions and cipher suites
+        try (SSLSocket socket = (SSLSocket) factory.createSocket("localhost", 8443)) {
             socket.setEnabledProtocols(new String[]{"TLSv1.2", "TLSv1.3"});
-
-            // Start TLS handshake explicitly (also done automatically on first I/O)
-            socket.startHandshake();
-            System.out.println("TLS Handshake complete!");
-
-            // Get session info
+            socket.startHandshake(); // perform TLS handshake
             SSLSession session = socket.getSession();
-            System.out.println("Protocol      : " + session.getProtocol());       // TLSv1.3
-            System.out.println("Cipher Suite  : " + session.getCipherSuite());
-            System.out.println("Session ID    : " + javax.xml.bind.DatatypeConverter
-                .printHexBinary(session.getId()));
-
-            // Communicate exactly like a regular socket
-            PrintWriter  out = new PrintWriter(socket.getOutputStream(), true);
-            BufferedReader in  = new BufferedReader(
-                new InputStreamReader(socket.getInputStream()));
-
+            System.out.println("Protocol    : " + session.getProtocol());
+            System.out.println("CipherSuite : " + session.getCipherSuite());
+            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out.println("Hello over SSL!");
             System.out.println("Server: " + in.readLine());
         }
     }
 }`,
-`// ── SSLServer.java ────────────────────────────────────────────────────
-import javax.net.ssl.*;
-import java.io.*;
-
+`// ── SSL SERVER ──────────────────────────────────────────────────
+// First generate keystore: keytool -genkey -alias myserver -keyalg RSA -keystore server.jks
+import javax.net.ssl.*; import java.io.*;
 public class SSLServer {
     public static void main(String[] args) throws Exception {
-        // System properties tell Java where the keystore (certificate) is
-        // keytool -genkey -alias myserver -keyalg RSA -keystore server.jks
         System.setProperty("javax.net.ssl.keyStore", "server.jks");
         System.setProperty("javax.net.ssl.keyStorePassword", "password");
-
-        int port = 8443;
-        SSLServerSocketFactory factory =
-            (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
-
-        try (SSLServerSocket serverSocket =
-                (SSLServerSocket) factory.createServerSocket(port)) {
-
-            System.out.println("SSL Server listening on port " + port);
-
+        SSLServerSocketFactory factory = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
+        try (SSLServerSocket server = (SSLServerSocket) factory.createServerSocket(8443)) {
+            System.out.println("SSL Server on port 8443");
             while (true) {
-                // accept() waits for SSL client — TLS handshake is done automatically
-                SSLSocket client = (SSLSocket) serverSocket.accept();
-                System.out.println("SSL Client connected: " +
-                    client.getInetAddress().getHostAddress());
-
-                // Handle in thread for multiple clients
+                SSLSocket client = (SSLSocket) server.accept(); // TLS handshake done here
                 new Thread(() -> {
                     try {
-                        BufferedReader in  = new BufferedReader(
-                            new InputStreamReader(client.getInputStream()));
-                        PrintWriter    out = new PrintWriter(
-                            client.getOutputStream(), true);
-
+                        BufferedReader in  = new BufferedReader(new InputStreamReader(client.getInputStream()));
+                        PrintWriter    out = new PrintWriter(client.getOutputStream(), true);
                         String msg = in.readLine();
-                        System.out.println("Received (encrypted): " + msg);
-                        out.println("Secure echo: " + msg);
-
+                        System.out.println("Received: " + msg);
+                        out.println("SSL Echo: " + msg);
                         client.close();
                     } catch (IOException e) { e.printStackTrace(); }
                 }).start();
@@ -2935,18 +1116,10 @@ public class SSLServer {
         }
     }
 }
-
-/* 
-SETUP COMMANDS (run before starting server):
-# Generate self-signed certificate/keystore
-keytool -genkey -alias myserver -keyalg RSA -keystore server.jks -storepass password
-
-# When running client, trust the self-signed cert:
-java -Djavax.net.ssl.trustStore=server.jks -Djavax.net.ssl.trustStorePassword=password SSLClient
-*/`]
-          }
+// Run client: java -Djavax.net.ssl.trustStore=server.jks -Djavax.net.ssl.trustStorePassword=password SSLClient`]
+          },
         ]
-      }
+      },
     ]
   },
   {
@@ -2956,242 +1129,269 @@ java -Djavax.net.ssl.trustStore=server.jks -Djavax.net.ssl.trustStorePassword=pa
     color: "#37474F",
     sections: [
       {
-        qnum: "A11-Q1",
-        qtitle: "RMI — Architecture & Block Diagram",
+        qnum: "Q1",
+        qtitle: "RMI — Architecture, Block Diagram & Complete Example",
         content: [
-          {
-            type: "definition",
-            text: "RMI (Remote Method Invocation): A Java API that allows an object in one JVM to call methods of an object in another JVM (on the same machine or over a network). The entire network communication is hidden — it looks and feels like a local method call."
-          },
-          {
-            type: "diagram",
-            text: `
-┌─────────────────────────────────────────────────────────────────────────┐
-│                         RMI ARCHITECTURE                                │
-│                                                                         │
-│  CLIENT JVM                          SERVER JVM                         │
-│  ┌───────────────┐                   ┌───────────────────────────────┐  │
-│  │               │                   │                               │  │
-│  │  Client App   │                   │   Remote Object (Impl)        │  │
-│  │  service.add()│                   │   add(a,b) { return a+b; }   │  │
-│  │               │                   │                               │  │
-│  └──────┬────────┘                   └───────────────┬───────────────┘  │
-│         │ "looks local"                              │ actually runs here│
-│  ┌──────▼────────┐  ═══Network════  ┌───────────────▼───────────────┐  │
-│  │               │  serialized args  │                               │  │
-│  │     STUB      │ ────────────────► │     SKELETON (auto in JDK5+)  │  │
-│  │ (local proxy) │ ◄──────────────── │     (unmarshal, call, return) │  │
-│  │               │  serialized result│                               │  │
-│  └───────────────┘                   └───────────────────────────────┘  │
-│                                                                         │
-│               ┌─────────────────────────────────────┐                  │
-│               │     RMI REGISTRY (port 1099)         │                  │
-│               │  "AddService" → stub reference        │                 │
-│               │  Server: Naming.rebind("AddService")  │                 │
-│               │  Client: Naming.lookup("AddService")  │                 │
-│               └─────────────────────────────────────┘                  │
-└─────────────────────────────────────────────────────────────────────────┘`
-          },
-          {
-            type: "table",
-            headers: ["Component", "Location", "Role"],
+          { type: "definition", text: "RMI (Remote Method Invocation): Allows an object in one JVM to call methods of an object in a DIFFERENT JVM (same machine or over the network). The network communication is completely hidden — it looks exactly like a local method call." },
+          { type: "diagram", text: `
+RMI ARCHITECTURE:
+
+CLIENT JVM                              SERVER JVM
+┌───────────────────┐                   ┌────────────────────────────────┐
+│  Client App       │                   │  Remote Object (Impl)          │
+│  service.add(5,3) │   Looks local!    │  add(a,b) { return a+b; }     │
+└────────┬──────────┘                   └────────────────┬───────────────┘
+         │                                               │
+┌────────▼──────────┐   ═══Network═══  ┌────────────────▼───────────────┐
+│   CLIENT STUB     │   args serialized │   SKELETON                     │
+│ (local proxy)     │ ─────────────────► (unmarshal, call, marshal)     │
+│ marshals params   │ ◄───────────────── result serialized               │
+│ sends over TCP    │                   └────────────────────────────────┘
+└───────────────────┘
+
+         RMI REGISTRY (port 1099)
+         Server: Naming.rebind("rmi://localhost/ServiceName", impl)
+         Client: Naming.lookup("rmi://localhost/ServiceName") → gets Stub
+
+TERMS:
+  Marshaling   → Serializing parameters into byte stream for network
+  Unmarshaling → Deserializing received bytes back to Java objects
+  Stub         → Client-side proxy that looks like the remote object
+  Skeleton     → Server-side receiver (auto-generated in modern Java)` },
+          { type: "table", headers: ["Component", "Where", "Role"],
             rows: [
-              ["Remote Interface", "Shared (both sides)", "Declares which methods are callable remotely. Extends java.rmi.Remote. All methods throw RemoteException."],
-              ["Remote Implementation", "Server", "The actual class with the logic. Extends UnicastRemoteObject. Implements the Remote Interface."],
-              ["Stub", "Client-side (generated)", "Client-side proxy. Marshals (serializes) arguments, sends over network, unmarshals result."],
-              ["RMI Registry", "Server (port 1099)", "Naming service. Server binds objects by name. Client looks up name to get Stub."],
-              ["Marshaling/Unmarshaling", "Automatic", "Java serializes parameters and return values automatically."],
-            ]
-          }
-        ]
-      },
-      {
-        qnum: "A11-Q2&Q3",
-        qtitle: "Steps to Create RMI Client & Server — Complete Example",
-        content: [
-          {
-            type: "heading",
-            text: "Steps to Build an RMI Application"
-          },
-          {
-            type: "bullets",
-            items: [
-              "Step 1: Define the Remote Interface — extends Remote, all methods declare throws RemoteException",
-              "Step 2: Implement the interface on server — extends UnicastRemoteObject",
-              "Step 3: Server creates RMI Registry and binds the remote object with a name",
-              "Step 4: Client looks up the name in the registry — gets a Stub",
-              "Step 5: Client calls methods on the Stub — calls travel to server, results come back"
+              ["Remote Interface", "Shared (both sides)", "Declares callable methods. extends java.rmi.Remote. ALL methods throw RemoteException."],
+              ["Remote Impl (Server)", "Server only", "Actual logic. extends UnicastRemoteObject. implements the Interface."],
+              ["Stub", "Client side (auto-generated)", "Marshals args, sends over TCP, unmarshals result."],
+              ["RMI Registry", "Server (port 1099)", "Naming service. Server binds, Client looks up."],
             ]
           },
-          {
-            type: "code",
-            label: "Complete RMI Example — Calculator Service",
-            lines: [`// ────────────────────────────────────────────────────────────────────
-// FILE 1: CalculatorService.java  — Remote Interface (SHARED)
-// Both client and server must have this file (or the .class)
-// ────────────────────────────────────────────────────────────────────
+          { type: "code", label: "Complete RMI — Calculator (3 files)",
+            lines: [
+`// ── FILE 1: CalculatorService.java (Remote Interface — SHARED) ──
 import java.rmi.*;
-
 public interface CalculatorService extends Remote {
-    // ALL methods MUST declare throws RemoteException
-    // This is mandatory — network calls can always fail
-    double add(double a, double b)      throws RemoteException;
-    double subtract(double a, double b) throws RemoteException;
-    double multiply(double a, double b) throws RemoteException;
-    double divide(double a, double b)   throws RemoteException;
+    // ALL methods MUST throw RemoteException — network can always fail!
+    double add(double a, double b)       throws RemoteException;
+    double subtract(double a, double b)  throws RemoteException;
+    double multiply(double a, double b)  throws RemoteException;
+    double divide(double a, double b)    throws RemoteException;
 }`,
-`// ────────────────────────────────────────────────────────────────────
-// FILE 2: CalculatorServiceImpl.java  — Server Implementation
-// ────────────────────────────────────────────────────────────────────
-import java.rmi.*;
-import java.rmi.server.*;
-import java.rmi.registry.*;
+`// ── FILE 2: CalculatorServiceImpl.java (SERVER) ─────────────────
+import java.rmi.*; import java.rmi.server.*; import java.rmi.registry.*;
 
-public class CalculatorServiceImpl
-        extends UnicastRemoteObject   // handles network infrastructure
-        implements CalculatorService {
+public class CalculatorServiceImpl extends UnicastRemoteObject
+                                   implements CalculatorService {
 
-    // Constructor MUST declare throws RemoteException (required by UnicastRemoteObject)
-    protected CalculatorServiceImpl() throws RemoteException {
-        super(); // calls UnicastRemoteObject constructor — exports this object
-    }
+    protected CalculatorServiceImpl() throws RemoteException { super(); }
 
-    @Override
     public double add(double a, double b) throws RemoteException {
-        System.out.println("[SERVER] add(" + a + ", " + b + ") called");
+        System.out.println("[SERVER] add(" + a + ", " + b + ")");
         return a + b;
     }
-
-    @Override
-    public double subtract(double a, double b) throws RemoteException {
-        return a - b;
-    }
-
-    @Override
-    public double multiply(double a, double b) throws RemoteException {
-        return a * b;
-    }
-
-    @Override
-    public double divide(double a, double b) throws RemoteException {
+    public double subtract(double a, double b) throws RemoteException { return a - b; }
+    public double multiply(double a, double b) throws RemoteException { return a * b; }
+    public double divide(double a, double b)   throws RemoteException {
         if (b == 0) throw new RemoteException("Division by zero!");
         return a / b;
     }
 
     public static void main(String[] args) {
         try {
-            // STEP 3a: Start RMI Registry on port 1099 (default RMI port)
-            // This is the naming service — maps names to remote objects
+            // Step 1: Start RMI Registry on port 1099
             Registry registry = LocateRegistry.createRegistry(1099);
-            System.out.println("RMI Registry started on port 1099.");
+            System.out.println("RMI Registry started.");
 
-            // STEP 3b: Create the remote object
+            // Step 2: Create and bind the remote object
             CalculatorServiceImpl calc = new CalculatorServiceImpl();
-
-            // STEP 3c: Bind the object to a name in the registry
-            // Naming.rebind replaces existing binding (won't throw if already exists)
             Naming.rebind("rmi://localhost/CalculatorService", calc);
-            System.out.println("CalculatorService bound. Server ready, waiting for clients...");
-
-            // Server keeps running... ctrl+C to stop
-        } catch (Exception e) {
-            System.err.println("Server error: " + e.getMessage());
-            e.printStackTrace();
-        }
+            // rebind = replace if name exists (bind = error if exists)
+            System.out.println("CalculatorService ready. Waiting for clients...");
+        } catch (Exception e) { e.printStackTrace(); }
     }
 }`,
-`// ────────────────────────────────────────────────────────────────────
-// FILE 3: CalculatorClient.java  — Client
-// ────────────────────────────────────────────────────────────────────
+`// ── FILE 3: CalculatorClient.java (CLIENT) ───────────────────────
 import java.rmi.*;
-
 public class CalculatorClient {
     public static void main(String[] args) {
         try {
-            // STEP 4: Look up the remote object by name in the registry
-            // Returns a STUB — a local proxy object for the remote calculator
-            // The stub implements CalculatorService, so we can call its methods
+            // Step 3: Look up service → receives CLIENT STUB
             CalculatorService calc = (CalculatorService)
                 Naming.lookup("rmi://localhost/CalculatorService");
 
-            System.out.println("Connected to CalculatorService on server.");
+            // Step 4: Call methods — looks local, runs on server!
+            System.out.println("15.5 + 24.5 = " + calc.add(15.5, 24.5));     // 40.0
+            System.out.println("100 - 37.5 = "  + calc.subtract(100, 37.5));  // 62.5
+            System.out.println("6 × 7 = "       + calc.multiply(6, 7));        // 42.0
+            System.out.println("99 ÷ 3 = "      + calc.divide(99, 3));         // 33.0
 
-            // STEP 5: Call methods — looks exactly like local method calls!
-            // But underneath: args are serialized → sent over TCP → executed on server
-            //                  result serialized → sent back → deserialized here
-            double result1 = calc.add(15.5, 24.5);
-            System.out.println("15.5 + 24.5 = " + result1);        // 40.0
-
-            double result2 = calc.subtract(100, 37.5);
-            System.out.println("100 - 37.5 = " + result2);         // 62.5
-
-            double result3 = calc.multiply(6, 7);
-            System.out.println("6 × 7 = " + result3);              // 42.0
-
-            double result4 = calc.divide(99, 3);
-            System.out.println("99 ÷ 3 = " + result4);             // 33.0
-
-        } catch (NotBoundException e) {
-            System.err.println("Service not found: " + e.getMessage());
-        } catch (RemoteException e) {
-            System.err.println("Remote error: " + e.getMessage());
-        } catch (Exception e) {
-            System.err.println("Error: " + e.getMessage());
-        }
+        } catch (NotBoundException e) { System.err.println("Service not found: " + e.getMessage()); }
+        catch (RemoteException e)     { System.err.println("Remote error: " + e.getMessage()); }
+        catch (Exception e)           { e.printStackTrace(); }
     }
 }
-
-/*
-HOW TO RUN:
-1. javac CalculatorService.java CalculatorServiceImpl.java CalculatorClient.java
-2. In terminal 1: java CalculatorServiceImpl    (starts server + registry)
-3. In terminal 2: java CalculatorClient         (runs client)
-
-SAMPLE OUTPUT (Client):
-Connected to CalculatorService on server.
-15.5 + 24.5 = 40.0
-100 - 37.5 = 62.5
-6 × 7 = 42.0
-99 ÷ 3 = 33.0
-*/`]
-          }
+// HOW TO RUN:
+// 1. javac CalculatorService.java CalculatorServiceImpl.java CalculatorClient.java
+// 2. java CalculatorServiceImpl   (starts server + registry)
+// 3. java CalculatorClient        (in another terminal)`
+            ]
+          },
         ]
-      }
+      },
     ]
-  }
+  },
+  {
+    id: "u8",
+    title: "Unit 8 — 2026 Exam Predictions 🎯",
+    badge: "Past Paper Analysis (2020, 2021, 2023)",
+    color: "#C62828",
+    sections: [
+      {
+        qnum: "PRED",
+        qtitle: "2026 Predicted Questions — Based on 3 Years of Past Papers",
+        content: [
+          { type: "warning", text: "Based on TU BCA Network Programming exam patterns from 2020, 2021, and 2023. The 2023 MCQ confirmed: socket port = 16 bits. Questions marked ★ appeared multiple times — very likely to repeat!" },
+          { type: "heading", text: "Group B Predictions (5 Marks Each)" },
+          { type: "table", headers: ["Predicted Question", "Probability", "Unit"],
+            rows: [
+              ["★ What is Client-Server model? Explain with block diagram", "Very High — appears every year as Q1", "Unit 1"],
+              ["★ What is InetAddress? Explain its factory methods and getter methods", "Very High — core topic of Unit 2", "Unit 2"],
+              ["★ Differentiate TCP and UDP. Explain DatagramSocket with example", "Very High — asked in 2021 & 2023", "Unit 6"],
+              ["★ What is URL? Explain its parts with example. Differentiate URL vs URI", "High — URL/URI comparison classic Q", "Unit 2–3"],
+              ["Explain HTTP request/response structure with all status codes", "High — HTTP asked every year", "Unit 4"],
+              ["Explain features of Java for network programming", "High — introductory question", "Unit 1"],
+              ["What is Proxy? Explain Proxy class and ProxySelector with example", "High", "Unit 3"],
+              ["Explain URLConnection class — how to read a web page", "High", "Unit 4–5"],
+              ["What is NIO? Compare NIO with traditional I/O", "High — NIO is unique to this course", "Unit 6"],
+              ["Explain cookie attributes (HttpOnly, Secure, Domain, etc.)", "Medium-High", "Unit 3–4"],
+              ["What is IP Multicasting? Explain MulticastSocket with example", "Medium-High — asked 2021", "Unit 6"],
+              ["Explain ServerSocket lifecycle — constructors and options", "Medium", "Unit 5"],
+              ["What is SSL/TLS? Explain secure sockets with difference from regular", "Medium", "Unit 6"],
+              ["Explain Authenticator and PasswordAuthentication classes", "Medium", "Unit 3"],
+              ["What is RMI? Explain its architecture and components", "High — every year includes RMI", "Unit 7"],
+            ]
+          },
+          { type: "heading", text: "Group C Predictions (10–15 Marks)" },
+          { type: "table", headers: ["Predicted Question", "Why Likely", "Unit"],
+            rows: [
+              ["★ Write multithreaded server (or GUI chat server + client)", "Long coding Q — appears almost every year", "Unit 5"],
+              ["★ Write complete RMI example — interface + server + client", "Standard 3-file coding question", "Unit 7"],
+              ["Write UDP client-server (daytime or echo) — include all packet steps", "UDP coding Q — appeared 2021 and 2023", "Unit 6"],
+              ["Write NIO non-blocking server using Selector and ByteBuffer", "NIO is unique to this subject — high chance", "Unit 6"],
+              ["Write program to read InetAddress details and enumerate all interfaces", "Lab 1 type question — foundational", "Unit 1–2"],
+              ["Write HttpURLConnection GET + POST with headers and response code handling", "HTTP practical — asked in various forms", "Unit 4"],
+              ["Explain RMI architecture with diagram AND write parameter marshaling example", "Theory + code combo — common in Group C", "Unit 7"],
+            ]
+          },
+          { type: "heading", text: "MCQ High-Probability Topics (2023 confirmed!)" },
+          { type: "table", headers: ["MCQ Topic", "Key Answer", "Source"],
+            rows: [
+              ["Valid size of a socket port address", "16 bits (0–65535)", "2023 MCQ confirmed!"],
+              ["Exception when host cannot be resolved", "UnknownHostException", "Lab 1 programs"],
+              ["UDP Java class for datagrams", "DatagramSocket and DatagramPacket", "Common"],
+              ["TCP Java class for server", "ServerSocket (not Socket!)", "Common"],
+              ["accept() return type", "Socket (regular Socket, not ServerSocket)", "Common"],
+              ["Multicast address range", "224.0.0.0 – 239.255.255.255", "Unit 6"],
+              ["NIO class for monitoring multiple channels", "Selector", "Unit 6"],
+              ["NIO class for data containers", "ByteBuffer", "Unit 6"],
+              ["flip() purpose in ByteBuffer", "Switch from write to read mode (limit=pos, pos=0)", "Unit 6"],
+              ["RMI registry default port", "1099", "Unit 7"],
+              ["RMI interface must extend", "java.rmi.Remote", "Unit 7"],
+              ["HTTP method to get headers only (no body)", "HEAD", "Unit 4"],
+              ["HTTP status code for 'Not Found'", "404", "Unit 4"],
+              ["Loopback address IPv4", "127.0.0.1 (isLoopbackAddress() = true)", "Unit 2"],
+              ["Which address type: 192.168.x.x", "Site-local / Private LAN (isSiteLocalAddress())", "Unit 2"],
+            ]
+          },
+        ]
+      },
+      {
+        qnum: "CHEAT",
+        qtitle: "Quick Reference Cheat Sheet",
+        content: [
+          { type: "heading", text: "TCP Socket — Two Sides Quick Reference" },
+          { type: "diagram", text: `
+SERVER SIDE                         CLIENT SIDE
+ServerSocket ss = new              Socket s = new
+  ServerSocket(port)                 Socket("localhost", port)
+Socket client = ss.accept()
+                                   // No accept() needed — client connects directly!
+BufferedReader in = new            BufferedReader in = new
+  BufferedReader(new                 BufferedReader(new
+  InputStreamReader(                 InputStreamReader(
+  client.getInputStream()))          s.getInputStream()))
+PrintWriter out = new              PrintWriter out = new
+  PrintWriter(                       PrintWriter(
+  client.getOutputStream(), true)    s.getOutputStream(), true)
+String msg = in.readLine()         out.println("Hello");
+out.println("Echo: " + msg)        String reply = in.readLine()
+client.close()                     s.close()` },
+          { type: "heading", text: "UDP — Two Sides Quick Reference" },
+          { type: "diagram", text: `
+SERVER SIDE                         CLIENT SIDE
+DatagramSocket ds =                DatagramSocket ds =
+  new DatagramSocket(port)           new DatagramSocket() // random port
+byte[] buf = new byte[256]         byte[] data = msg.getBytes()
+DatagramPacket p =                 DatagramPacket p = new DatagramPacket(
+  new DatagramPacket(buf, buf.len)   data, data.len, serverAddr, serverPort)
+ds.receive(p) // BLOCKS            ds.send(p) // fire-and-forget
+String msg = new String(           // optionally receive reply
+  p.getData(), 0, p.getLength())
+// send reply back
+ds.send(new DatagramPacket(reply, reply.len, p.getAddress(), p.getPort()))` },
+          { type: "heading", text: "NIO ByteBuffer — All Methods" },
+          { type: "diagram", text: `
+ByteBuffer.allocate(n)         → Create heap buffer (n bytes capacity)
+ByteBuffer.allocateDirect(n)   → Create direct buffer (faster for I/O)
+buf.put(data)                  → Write data, advances position
+buf.flip()                     → Switch WRITE→READ: limit=pos, pos=0  ← MOST IMPORTANT
+buf.get(arr)                   → Read data, advances position
+buf.remaining()                → limit - position (bytes left to read)
+buf.clear()                    → Reset for fresh WRITE: pos=0, limit=cap
+buf.compact()                  → Move unread bytes to front, ready for more writing
+buf.rewind()                   → Reset position=0, keep limit (re-read from start)
+buf.mark()                     → Save position
+buf.reset()                    → Go back to marked position` },
+          { type: "heading", text: "RMI — 5 Steps Always" },
+          { type: "diagram", text: `
+Step 1: interface MyService extends Remote { method() throws RemoteException; }
+Step 2: class MyImpl extends UnicastRemoteObject implements MyService { ... }
+Step 3: [Server] LocateRegistry.createRegistry(1099);
+         Naming.rebind("rmi://localhost/MyService", new MyImpl());
+Step 4: [Client] MyService s = (MyService) Naming.lookup("rmi://localhost/MyService");
+Step 5: s.method()  ← looks local, runs on server!
+
+KEY RULES:
+  • Interface MUST extend java.rmi.Remote
+  • ALL methods MUST declare throws RemoteException
+  • Implementation MUST extend UnicastRemoteObject
+  • Registry default port = 1099
+  • Naming.bind() → error if name exists
+  • Naming.rebind() → replaces if name exists (safer)` },
+          { type: "tip", label: "TOP 4 MUST-PREPARE", text: "1) Multithreaded TCP Chat Server (ChatServer.java + ChatClient.java). 2) Complete RMI example (3 files: Interface + Server + Client). 3) UDP Server/Client (DatagramSocket + DatagramPacket). 4) NIO Server with Selector + ByteBuffer. These 4 coding templates cover ~65% of Group C marks." },
+        ]
+      },
+    ]
+  },
 ];
 
 const COLORS = {
-  bg: "#F8F9FA",
-  surface: "#FFFFFF",
-  border: "#E2E8F0",
-  code_bg: "#F1F5F9",
-  code_border: "#CBD5E1",
-  text: "#1E293B",
-  muted: "#64748B",
-  definition_bg: "#EFF6FF",
-  definition_border: "#3B82F6",
-  analogy_bg: "#FFF7ED",
-  analogy_border: "#F97316",
-  tip_bg: "#F0FDF4",
-  tip_border: "#22C55E",
-  warning_bg: "#FFF1F2",
-  warning_border: "#F43F5E",
-  diagram_bg: "#1E293B",
-  heading: "#1E293B",
+  bg: "#F0F4F8", surface: "#FFFFFF", border: "#DDE3EA",
+  code_bg: "#F1F5F9", code_border: "#CBD5E1", text: "#1E293B",
+  muted: "#64748B", definition_bg: "#EFF6FF", definition_border: "#3B82F6",
+  analogy_bg: "#FFF7ED", analogy_border: "#F97316", tip_bg: "#F0FDF4",
+  tip_border: "#22C55E", warning_bg: "#FFF1F2", warning_border: "#F43F5E",
+  diagram_bg: "#1E293B", heading: "#1E293B",
 };
 
 function CodeBlock({ label, lines }) {
   const [copied, setCopied] = useState(false);
   const allCode = lines.join("\n\n");
-
   const handleCopy = () => {
     navigator.clipboard?.writeText(allCode).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      setCopied(true); setTimeout(() => setCopied(false), 2000);
     });
   };
-
   return (
     <div style={{ margin: "12px 0", borderRadius: 8, overflow: "hidden", border: `1px solid ${COLORS.code_border}` }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "#334155", padding: "8px 14px" }}>
@@ -3212,34 +1412,34 @@ function CodeBlock({ label, lines }) {
 function ContentBlock({ item }) {
   switch (item.type) {
     case "explain":
-      return <p style={{ color: COLORS.text, fontSize: 14.5, lineHeight: 1.75, margin: "8px 0" }}>{item.text}</p>;
+      return <p style={{ color: COLORS.text, fontSize: 14.5, lineHeight: 1.8, margin: "8px 0" }}>{item.text}</p>;
     case "heading":
       return <h4 style={{ color: COLORS.heading, fontSize: 15, fontWeight: 700, margin: "18px 0 8px", paddingBottom: 5, borderBottom: `2px solid ${COLORS.border}` }}>{item.text}</h4>;
     case "definition":
       return (
         <div style={{ background: COLORS.definition_bg, border: `1px solid ${COLORS.definition_border}`, borderLeft: `4px solid ${COLORS.definition_border}`, borderRadius: 7, padding: "12px 16px", margin: "10px 0" }}>
-          <p style={{ margin: 0, color: "#1D4ED8", fontSize: 14, lineHeight: 1.7 }}>{item.text}</p>
+          <p style={{ margin: 0, color: "#1D4ED8", fontSize: 14.5, lineHeight: 1.7 }}>{item.text}</p>
         </div>
       );
     case "analogy":
       return (
         <div style={{ background: COLORS.analogy_bg, border: `1px solid ${COLORS.analogy_border}`, borderLeft: `4px solid ${COLORS.analogy_border}`, borderRadius: 7, padding: "10px 16px", margin: "10px 0" }}>
-          <span style={{ color: COLORS.analogy_border, fontWeight: 700, fontSize: 12 }}>🔍 ANALOGY &nbsp;</span>
-          <span style={{ color: "#92400E", fontSize: 14, lineHeight: 1.7, fontStyle: "italic" }}>{item.text}</span>
+          <div style={{ color: COLORS.analogy_border, fontWeight: 700, fontSize: 12, marginBottom: 4 }}>🔍 ANALOGY</div>
+          <span style={{ color: "#92400E", fontSize: 14.5, lineHeight: 1.7, fontStyle: "italic" }}>{item.text}</span>
         </div>
       );
     case "tip":
       return (
-        <div style={{ background: COLORS.tip_bg, border: `1px solid ${COLORS.tip_border}`, borderLeft: `4px solid ${COLORS.tip_border}`, borderRadius: 7, padding: "10px 16px", margin: "10px 0", display: "flex", gap: 10 }}>
-          <span style={{ color: "#16A34A", fontWeight: 800, fontSize: 12, minWidth: 90 }}>💡 {item.label}</span>
-          <span style={{ color: "#14532D", fontSize: 14, lineHeight: 1.7 }}>{item.text}</span>
+        <div style={{ background: COLORS.tip_bg, border: `1px solid ${COLORS.tip_border}`, borderLeft: `4px solid ${COLORS.tip_border}`, borderRadius: 7, padding: "10px 16px", margin: "10px 0", display: "flex", gap: 10, alignItems: "flex-start" }}>
+          <span style={{ color: "#16A34A", fontWeight: 800, fontSize: 12, minWidth: 100, paddingTop: 2 }}>💡 {item.label}</span>
+          <span style={{ color: "#14532D", fontSize: 14.5, lineHeight: 1.7 }}>{item.text}</span>
         </div>
       );
     case "warning":
       return (
         <div style={{ background: COLORS.warning_bg, border: `1px solid ${COLORS.warning_border}`, borderLeft: `4px solid ${COLORS.warning_border}`, borderRadius: 7, padding: "10px 16px", margin: "10px 0" }}>
-          <span style={{ color: COLORS.warning_border, fontWeight: 700, fontSize: 12 }}>⚠ WARNING &nbsp;</span>
-          <span style={{ color: "#9F1239", fontSize: 14, lineHeight: 1.7 }}>{item.text}</span>
+          <div style={{ color: COLORS.warning_border, fontWeight: 700, fontSize: 12, marginBottom: 4 }}>⚠ WARNING</div>
+          <span style={{ color: "#9F1239", fontSize: 14.5, lineHeight: 1.7 }}>{item.text}</span>
         </div>
       );
     case "diagram":
@@ -3252,7 +1452,8 @@ function ContentBlock({ item }) {
       return (
         <ul style={{ margin: "8px 0", paddingLeft: 22 }}>
           {item.items.map((it, i) => (
-            <li key={i} style={{ color: COLORS.text, fontSize: 14.5, lineHeight: 1.75, marginBottom: 5 }} dangerouslySetInnerHTML={{ __html: it.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }} />
+            <li key={i} style={{ color: COLORS.text, fontSize: 14.5, lineHeight: 1.8, marginBottom: 6 }}
+                dangerouslySetInnerHTML={{ __html: it.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }} />
           ))}
         </ul>
       );
@@ -3261,11 +1462,9 @@ function ContentBlock({ item }) {
         <div style={{ overflowX: "auto", margin: "12px 0" }}>
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13.5 }}>
             <thead>
-              <tr>
-                {item.headers.map((h, i) => (
-                  <th key={i} style={{ background: "#1E293B", color: "#fff", padding: "9px 12px", textAlign: "left", fontWeight: 700, borderBottom: "2px solid #334155" }}>{h}</th>
-                ))}
-              </tr>
+              <tr>{item.headers.map((h, i) => (
+                <th key={i} style={{ background: "#1E293B", color: "#fff", padding: "9px 12px", textAlign: "left", fontWeight: 700, borderBottom: "2px solid #334155" }}>{h}</th>
+              ))}</tr>
             </thead>
             <tbody>
               {item.rows.map((row, ri) => (
@@ -3289,65 +1488,52 @@ function ContentBlock({ item }) {
 export default function Networking() {
   const [activeUnit, setActiveUnit] = useState("u1");
   const [openSections, setOpenSections] = useState({});
-
   const toggleSection = (key) => setOpenSections(p => ({ ...p, [key]: !p[key] }));
   const unit = UNITS.find(u => u.id === activeUnit);
 
   return (
-    <div style={{ fontFamily: "'Georgia', 'Times New Roman', serif", background: COLORS.bg, minHeight: "100vh", color: COLORS.text }}>
-      {/* Header */}
-      <div style={{ background: "#1E293B", padding: "18px 24px", position: "sticky", top: 0, zIndex: 100, boxShadow: "0 2px 12px rgba(0,0,0,0.3)" }}>
-        <div style={{ maxWidth: 960, margin: "0 auto" }}>
-          <h1 style={{ color: "#fff", margin: 0, fontSize: 20, fontWeight: 700, letterSpacing: "-0.5px" }}>
-            Network Programming
-          </h1>
+    <div style={{ fontFamily: "'Segoe UI', 'Helvetica Neue', Arial, sans-serif", background: COLORS.bg, minHeight: "100vh", color: COLORS.text, textAlign: "left" }}>
+      <div style={{ background: "linear-gradient(135deg, #0F172A 0%, #1E293B 100%)", padding: "18px 24px", position: "sticky", top: 0, zIndex: 100, boxShadow: "0 2px 12px rgba(0,0,0,0.4)" }}>
+        <div style={{ maxWidth: 1000, margin: "0 auto", display: "flex", alignItems: "center", gap: 16 }}>
+          <div style={{ background: "#0EA5E9", borderRadius: 10, width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>🌐</div>
+          <div>
+            <h1 style={{ color: "#fff", margin: 0, fontSize: 19, fontWeight: 700 }}>Network Programming — BCA 6th Semester</h1>
+            <div style={{ color: "#94A3B8", fontSize: 12, marginTop: 2 }}>Complete Exam Guide 2026 • CACS355 • 7 Units + Predictions</div>
+          </div>
         </div>
       </div>
 
-      {/* Unit Tabs */}
-      <div style={{ background: "#fff", borderBottom: `1px solid ${COLORS.border}`, overflowX: "auto" }}>
-        <div style={{ maxWidth: 960, margin: "0 auto", display: "flex", gap: 0 }}>
+      <div style={{ background: "#fff", borderBottom: `2px solid ${COLORS.border}`, overflowX: "auto" }}>
+        <div style={{ maxWidth: 1000, margin: "0 auto", display: "flex", gap: 0, minWidth: "max-content" }}>
           {UNITS.map(u => (
             <button key={u.id} onClick={() => setActiveUnit(u.id)}
-              style={{
-                padding: "14px 18px", border: "none", background: "none", cursor: "pointer",
-                fontSize: 13, fontFamily: "sans-serif", fontWeight: activeUnit === u.id ? 700 : 500,
-                color: activeUnit === u.id ? u.color : COLORS.muted,
-                borderBottom: activeUnit === u.id ? `3px solid ${u.color}` : "3px solid transparent",
-                whiteSpace: "nowrap", transition: "all 0.15s"
-              }}>
+              style={{ padding: "13px 14px", border: "none", background: "none", cursor: "pointer", fontSize: 12, fontWeight: activeUnit === u.id ? 700 : 500, color: activeUnit === u.id ? u.color : COLORS.muted, borderBottom: activeUnit === u.id ? `3px solid ${u.color}` : "3px solid transparent", whiteSpace: "nowrap", transition: "all 0.15s" }}>
               {u.title.split("—")[0].trim()}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Content */}
-      <div style={{ maxWidth: 960, margin: "0 auto", padding: "28px 20px 60px" }}>
-        {/* Unit Header */}
-        <div style={{ background: unit.color, borderRadius: 12, padding: "20px 28px", marginBottom: 28 }}>
-          <h2 style={{ color: "#fff", margin: 0, fontSize: 22, fontWeight: 700 }}>{unit.title}</h2>
-          <span style={{ color: "rgba(255,255,255,0.75)", fontSize: 13, fontFamily: "sans-serif" }}>{unit.badge}</span>
+      <div style={{ maxWidth: 1000, margin: "0 auto", padding: "28px 20px 80px" }}>
+        <div style={{ background: `linear-gradient(135deg, ${unit.color} 0%, ${unit.color}CC 100%)`, borderRadius: 14, padding: "22px 28px", marginBottom: 28, boxShadow: `0 4px 20px ${unit.color}40` }}>
+          <h2 style={{ color: "#fff", margin: 0, fontSize: 21, fontWeight: 700 }}>{unit.title}</h2>
+          <span style={{ color: "rgba(255,255,255,0.8)", fontSize: 13, marginTop: 4, display: "block" }}>{unit.badge}</span>
         </div>
 
-        {/* Sections */}
         {unit.sections.map((sec, si) => {
           const key = `${unit.id}-${si}`;
           const open = openSections[key] !== false;
           return (
-            <div key={key} style={{ background: COLORS.surface, borderRadius: 10, border: `1px solid ${COLORS.border}`, marginBottom: 16, overflow: "hidden", boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}>
+            <div key={key} style={{ background: COLORS.surface, borderRadius: 12, border: `1px solid ${COLORS.border}`, marginBottom: 16, overflow: "hidden", boxShadow: open ? "0 2px 12px rgba(0,0,0,0.08)" : "0 1px 4px rgba(0,0,0,0.04)" }}>
               <button onClick={() => toggleSection(key)}
-                style={{ width: "100%", background: open ? "#F8FAFC" : "#fff", border: "none", padding: "16px 20px", cursor: "pointer", display: "flex", alignItems: "center", gap: 14, textAlign: "left", transition: "background 0.15s" }}>
-                <span style={{ background: unit.color, color: "#fff", borderRadius: 6, padding: "3px 10px", fontSize: 11, fontFamily: "sans-serif", fontWeight: 700, minWidth: 70, textAlign: "center" }}>{sec.qnum}</span>
-                <span style={{ color: COLORS.text, fontSize: 15, fontWeight: 700, flex: 1, fontFamily: "sans-serif" }}>{sec.qtitle}</span>
-                <span style={{ color: COLORS.muted, fontSize: 20, transition: "transform 0.2s", transform: open ? "rotate(0)" : "rotate(-90deg)" }}>▾</span>
+                style={{ width: "100%", background: open ? "#F8FAFC" : "#fff", border: "none", padding: "15px 20px", cursor: "pointer", display: "flex", alignItems: "center", gap: 14, textAlign: "left", transition: "background 0.15s" }}>
+                <span style={{ background: unit.color, color: "#fff", borderRadius: 6, padding: "3px 10px", fontSize: 11, fontWeight: 700, minWidth: 60, textAlign: "center", whiteSpace: "nowrap" }}>{sec.qnum}</span>
+                <span style={{ color: COLORS.text, fontSize: 15, fontWeight: 700, flex: 1 }}>{sec.qtitle}</span>
+                <span style={{ color: COLORS.muted, fontSize: 18, transition: "transform 0.2s", transform: open ? "rotate(0deg)" : "rotate(-90deg)", display: "inline-block" }}>▾</span>
               </button>
-
               {open && (
-                <div style={{ padding: "4px 24px 24px" }}>
-                  {sec.content.map((item, ci) => (
-                    <ContentBlock key={ci} item={item} />
-                  ))}
+                <div style={{ padding: "4px 24px 28px" }}>
+                  {sec.content.map((item, ci) => <ContentBlock key={ci} item={item} />)}
                 </div>
               )}
             </div>
